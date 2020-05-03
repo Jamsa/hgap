@@ -1,0 +1,4 @@
+{
+  "composite/src/webcontent/web": "target/web-exploded/web",
+  "ecosystem/src/webcontent/web": "target/web-exploded/web"
+}
