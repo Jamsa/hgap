@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -103,10 +104,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("%+v\n", config.GlobalConfig)
 	go fsmon.StartWatcher(config.GlobalConfig.OutDirectory, fileChangeHandle)
 	http.HandleFunc("/", index)
-	log.Println("开始监听9090...")
-	err := http.ListenAndServe(":9090", nil)
+	log.Println("开始监听", config.GlobalConfig.Port, "...")
+	err = http.ListenAndServe(fmt.Sprintf(":%d", config.GlobalConfig.Port), nil)
 	if err != nil {
 		log.Fatal("监听出错: ", err)
 	}

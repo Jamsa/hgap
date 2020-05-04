@@ -91,6 +91,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("%+v\n", config.GlobalConfig)
 	log.Println("开始监视请求文件目录")
 	fsmon.StartWatcher(config.GlobalConfig.InDirectory, processRequest)
 }

@@ -1,10 +1,11 @@
 {
     "timeout": 30000,
-    "keepFiles": true,
+    "port": 9090,
+    "keepFiles": false,
     "encrpt": false,
     "inDirectory": "in/req",
     "outDirectory": "out/resp",
     "urlMapping": {
-        "/": "http://www.bing.com"
+        "/": "https://cn.bing.com/"
     }
 }

@@ -12,6 +12,7 @@ import (
 
 // Config 配置信息
 type Config struct {
+	Port         int               `json:"port"`         //监听端口
 	Timeout      int               `json:"timeout"`      //超时时间
 	KeepFiles    bool              `json:"keepFiles"`    //保存历史文件
 	InDirectory  string            `json:"inDirectory"`  //请求文件保存路径
@@ -21,6 +22,7 @@ type Config struct {
 
 // GlobalConfig 全局配置
 var GlobalConfig = Config{
+	Port:         9090,
 	Timeout:      30000,
 	KeepFiles:    true,
 	InDirectory:  "in/req",
@@ -70,10 +72,10 @@ func ParseConfig() error {
 }
 
 func makeDir(dir string) error {
-	_, err := os.Stat(GlobalConfig.InDirectory)
+	_, err := os.Stat(dir)
 	if os.IsNotExist(err) {
-		log.Printf("目录 %s 不存在，将创建目录", GlobalConfig.InDirectory)
-		err = os.MkdirAll(GlobalConfig.InDirectory, os.ModePerm)
+		log.Printf("目录 %s 不存在，将创建目录", dir)
+		err = os.MkdirAll(dir, os.ModePerm)
 		if err != nil {
 			return errors.WithMessagef(err, "创建目录出错")
 		}
