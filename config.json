@@ -1,0 +1,10 @@
+{
+    "timeout": 30000,
+    "keepFiles": true,
+    "encrpt": false,
+    "inDirectory": "in/req",
+    "outDirectory": "out/resp",
+    "urlMapping": {
+        "/": "http://www.bing.com"
+    }
+}

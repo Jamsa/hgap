@@ -13,19 +13,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jamsa/hgap/config"
 	fsmon "github.com/jamsa/hgap/fsmon"
 	uuid "github.com/satori/go.uuid"
 )
 
 var reqs = make(map[string]chan struct{})
-
-func saveRequest(name string, timeout int) {
-
-}
-
-func writeResponse() {
-
-}
 
 func fileChangeHandle(fileName string) {
 	_, file := filepath.Split(fileName)
@@ -53,7 +46,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	log.Println("保存请求:" + reqID)
 	//log.Println(string(content))
 
-	ioutil.WriteFile("in/req/"+reqID+".req", content, 0644)
+	ioutil.WriteFile(config.GlobalConfig.InDirectory+"/"+reqID+".req", content, 0644)
 	finish := make(chan struct{})
 	reqs[reqID] = finish
 	//最长20秒超时
@@ -62,14 +55,17 @@ func index(w http.ResponseWriter, r *http.Request) {
 	cleanUp := func() {
 		timeout.Stop()
 		delete(reqs, reqID)
-		// TODO: 删除文件
+		if !config.GlobalConfig.KeepFiles {
+			os.Remove(config.GlobalConfig.InDirectory + "/" + reqID + ".req")
+			os.Remove(config.GlobalConfig.OutDirectory + "/" + reqID + ".resp")
+		}
 		close(finish)
 	}
 
 	writeResp := func() {
 		//读取响应
 		log.Println("读取响应:" + reqID)
-		f, err := os.Open("out/resp/" + reqID + ".resp")
+		f, err := os.Open(config.GlobalConfig.OutDirectory + "/" + reqID + ".resp")
 		if err != nil {
 			log.Fatal("error", err)
 		}
@@ -103,7 +99,11 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	go fsmon.StartWatcher("out/resp", fileChangeHandle)
+	err := config.ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+	go fsmon.StartWatcher(config.GlobalConfig.OutDirectory, fileChangeHandle)
 	http.HandleFunc("/", index)
 	log.Println("开始监听9090...")
 	err := http.ListenAndServe(":9090", nil)
