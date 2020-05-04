@@ -1,11 +1,12 @@
 {
     "timeout": 30000,
     "port": 9090,
-    "keepFiles": false,
+    "keepFiles": true,
     "encrpt": false,
     "inDirectory": "in/req",
     "outDirectory": "out/resp",
     "urlMapping": {
+        "/test": "http://localhost:3005/index.html",
         "/": "https://cn.bing.com/"
     }
 }

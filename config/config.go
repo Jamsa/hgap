@@ -27,8 +27,8 @@ var GlobalConfig = Config{
 	KeepFiles:    true,
 	InDirectory:  "in/req",
 	OutDirectory: "out/resp",
-	URLMapping: map[string]string{
-		"/": "http://www.baidu.com",
+	URLMapping:   map[string]string{
+		// "/": "http://www.baidu.com",
 	},
 }
 

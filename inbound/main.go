@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/jamsa/hgap/config"
@@ -19,15 +20,24 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-var reqs = make(map[string]chan struct{})
+// ChannelWrapper 包装
+//type ChannelWrapper chan interface{}
+
+// UnWrapper 解包
+/*func (ch ChannelWrapper) UnWrapper() chan interface{} {
+	return ch
+}*/
+
+var reqs sync.Map
 
 func fileChangeHandle(fileName string) {
 	_, file := filepath.Split(fileName)
 	chName := strings.TrimSuffix(file, filepath.Ext(file))
-	ch, ok := reqs[chName]
+	ch, ok := reqs.Load(chName)
+
 	if ok {
 		log.Println("发送响应文件通知:" + chName)
-		ch <- struct{}{}
+		ch.(chan interface{}) <- struct{}{}
 	} else {
 		log.Println("文件响应通道不存在:" + chName)
 	}
@@ -36,11 +46,15 @@ func fileChangeHandle(fileName string) {
 func index(w http.ResponseWriter, r *http.Request) {
 	content, err := httputil.DumpRequest(r, true)
 	if err != nil {
-		log.Fatal("error:", err)
+		//log.Fatal("error:", err)
+		log.Println("保存请求信息出错", err)
+		return
 	}
 	uid, err := uuid.NewV4()
 	if err != nil {
-		log.Fatal("error", err)
+		log.Println("生成请求uuid出错", err)
+		return
+		//log.Fatal("error", err)
 	}
 	reqID := uid.String()
 
@@ -48,20 +62,22 @@ func index(w http.ResponseWriter, r *http.Request) {
 	//log.Println(string(content))
 
 	ioutil.WriteFile(config.GlobalConfig.InDirectory+"/"+reqID+".req", content, 0644)
-	finish := make(chan struct{})
-	reqs[reqID] = finish
-	//最长20秒超时
-	timeout := time.NewTicker(20000 * time.Millisecond)
+	finish := make(chan interface{})
+	reqs.Store(reqID, finish)
+	//超时
+	timeout := time.NewTicker(time.Duration(config.GlobalConfig.Timeout) * time.Millisecond)
 
 	cleanUp := func() {
 		timeout.Stop()
-		delete(reqs, reqID)
+		//delete(reqs, reqID)
+		reqs.Delete(reqID)
 		if !config.GlobalConfig.KeepFiles {
 			os.Remove(config.GlobalConfig.InDirectory + "/" + reqID + ".req")
 			os.Remove(config.GlobalConfig.OutDirectory + "/" + reqID + ".resp")
 		}
 		close(finish)
 	}
+	defer cleanUp()
 
 	writeResp := func() {
 		//读取响应
@@ -96,7 +112,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		log.Println("请求处理超时:" + reqID)
 
 	}
-	cleanUp()
+	//cleanUp()
 }
 
 func main() {
@@ -106,9 +122,18 @@ func main() {
 	}
 	log.Printf("%+v\n", config.GlobalConfig)
 	go fsmon.StartWatcher(config.GlobalConfig.OutDirectory, fileChangeHandle)
+
+	server := &http.Server{
+		Addr:         fmt.Sprintf(":%d", config.GlobalConfig.Port),
+		ReadTimeout:  3 * time.Second,
+		WriteTimeout: 5 * time.Second,
+	}
 	http.HandleFunc("/", index)
+	//http.Server.ReadTimeout = 30 * time.Second
+
 	log.Println("开始监听", config.GlobalConfig.Port, "...")
-	err = http.ListenAndServe(fmt.Sprintf(":%d", config.GlobalConfig.Port), nil)
+	//err = http.ListenAndServe(, nil)
+	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatal("监听出错: ", err)
 	}
