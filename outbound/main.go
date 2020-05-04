@@ -13,10 +13,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fsnotify/fsnotify"
+	fsmon "github.com/jamsa/hgap/fsmon"
 )
 
-func processRequest(reqID string) {
+func processRequest(fileName string) {
+	_, file := filepath.Split(fileName)
+	reqID := strings.TrimSuffix(file, filepath.Ext(file))
+
 	//读取请求信息
 	f, err := os.Open("in/req/" + reqID + ".req")
 	if err != nil {
@@ -59,52 +62,7 @@ func processRequest(reqID string) {
 	log.Println("写入响应文件:" + reqID)
 }
 
-func startWatcher() {
-	watch, err := fsnotify.NewWatcher()
-	watch.Add("in/req")
-	if err != nil {
-		log.Fatal("创建watcher失败", err)
-	}
-	for {
-		select {
-		case ev := <-watch.Events:
-			{
-				if ev.Op&fsnotify.Create == fsnotify.Create {
-					log.Println("创建文件: ", ev.Name)
-
-					if fi, err := os.Stat(ev.Name); err == nil {
-						if !fi.IsDir() {
-							_, file := filepath.Split(ev.Name)
-							chName := strings.TrimSuffix(file, filepath.Ext(file))
-							go processRequest(chName)
-						}
-					}
-				}
-				if ev.Op&fsnotify.Write == fsnotify.Write {
-					log.Println("写入文件: ", ev.Name)
-
-				}
-				if ev.Op&fsnotify.Remove == fsnotify.Remove {
-					log.Println("删除文件: ", ev.Name)
-
-				}
-				if ev.Op&fsnotify.Rename == fsnotify.Rename {
-					log.Println("重命名文件: ", ev.Name)
-				}
-				if ev.Op&fsnotify.Chmod == fsnotify.Chmod {
-					log.Println("修改权限: ", ev.Name)
-				}
-			}
-		case err := <-watch.Errors:
-			{
-				log.Println("error : ", err)
-				return
-			}
-		}
-	}
-}
-
 func main() {
 	log.Println("开始监视请求文件目录")
-	startWatcher()
+	fsmon.StartWatcher("in/req", processRequest)
 }

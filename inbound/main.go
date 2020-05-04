@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fsnotify/fsnotify"
+	fsmon "github.com/jamsa/hgap/fsmon"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -27,54 +27,15 @@ func writeResponse() {
 
 }
 
-func startWatcher() {
-	watch, err := fsnotify.NewWatcher()
-	watch.Add("out/resp")
-	if err != nil {
-		log.Fatal("创建watcher失败", err)
-	}
-	for {
-		select {
-		case ev := <-watch.Events:
-			{
-				if ev.Op&fsnotify.Create == fsnotify.Create {
-					log.Println("创建文件: ", ev.Name)
-
-					if fi, err := os.Stat(ev.Name); err == nil {
-						if !fi.IsDir() {
-							_, file := filepath.Split(ev.Name)
-							chName := strings.TrimSuffix(file, filepath.Ext(file))
-							ch, ok := reqs[chName]
-							if ok {
-								log.Println("发送响应文件通知:" + chName)
-								ch <- struct{}{}
-							} else {
-								log.Println("文件响应通道不存在:" + chName)
-							}
-						}
-					}
-				}
-				if ev.Op&fsnotify.Write == fsnotify.Write {
-					log.Println("写入文件: ", ev.Name)
-
-				}
-				if ev.Op&fsnotify.Remove == fsnotify.Remove {
-					log.Println("删除文件: ", ev.Name)
-
-				}
-				if ev.Op&fsnotify.Rename == fsnotify.Rename {
-					log.Println("重命名文件: ", ev.Name)
-				}
-				if ev.Op&fsnotify.Chmod == fsnotify.Chmod {
-					log.Println("修改权限: ", ev.Name)
-				}
-			}
-		case err := <-watch.Errors:
-			{
-				log.Println("error : ", err)
-				return
-			}
-		}
+func fileChangeHandle(fileName string) {
+	_, file := filepath.Split(fileName)
+	chName := strings.TrimSuffix(file, filepath.Ext(file))
+	ch, ok := reqs[chName]
+	if ok {
+		log.Println("发送响应文件通知:" + chName)
+		ch <- struct{}{}
+	} else {
+		log.Println("文件响应通道不存在:" + chName)
 	}
 }
 
@@ -132,17 +93,17 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 	select {
 	case <-finish:
-		log.Println("获取响应")
+		log.Println("获取响应:" + reqID)
 		writeResp()
 	case <-timeout.C:
-		log.Println("请求处理超时")
+		log.Println("请求处理超时:" + reqID)
 
 	}
 	cleanUp()
 }
 
 func main() {
-	go startWatcher()
+	go fsmon.StartWatcher("out/resp", fileChangeHandle)
 	http.HandleFunc("/", index)
 	log.Println("开始监听9090...")
 	err := http.ListenAndServe(":9090", nil)
