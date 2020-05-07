@@ -3,6 +3,7 @@ package fsmon
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/fsnotify/fsnotify"
 )
@@ -21,9 +22,8 @@ func StartWatcher(path string, createdHandler func(fileName string)) {
 			{
 				if ev.Op&fsnotify.Create == fsnotify.Create {
 					log.Println("创建文件: ", ev.Name)
-
 					if fi, err := os.Stat(ev.Name); err == nil {
-						if !fi.IsDir() {
+						if !fi.IsDir() && !strings.HasSuffix(ev.Name, ".tmp") {
 							go createdHandler(ev.Name)
 						}
 					}

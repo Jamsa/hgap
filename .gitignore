@@ -6,3 +6,4 @@ h.go
 http.req
 http.resp
 *.exe
+dist

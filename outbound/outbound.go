@@ -17,11 +17,18 @@ import (
 )
 
 func processRequest(fileName string) {
+	//time.Sleep(1 * time.Second)
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("处理请求文件", fileName, "出错", r)
+		}
+	}()
 	_, file := filepath.Split(fileName)
 	reqID := strings.TrimSuffix(file, filepath.Ext(file))
 
 	//读取请求信息
-	f, err := os.Open(config.GlobalConfig.InDirectory + "/" + reqID + ".req")
+	//f, err := os.Open( config.GlobalConfig.InDirectory + "/" + reqID + ".req")
+	f, err := os.Open(fileName)
 	if err != nil {
 		log.Println("读取请求文件", reqID, "出错", err)
 		return
@@ -75,12 +82,20 @@ func processRequest(fileName string) {
 				log.Println("Dump响应信息出错", err)
 				return
 			}
-			err = ioutil.WriteFile(config.GlobalConfig.OutDirectory+"/"+reqID+".resp", content, 0644)
+			//err = ioutil.WriteFile(config.GlobalConfig.OutDirectory+"/"+reqID+".resp", content, 0644)
+			err = ioutil.WriteFile(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".tmp"), content, 0644)
 			if err != nil {
 				log.Println("写入响应文件出错", err)
 				return
 			}
-			log.Println("写入响应文件:" + reqID)
+
+			err = os.Rename(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".tmp"), filepath.Join(config.GlobalConfig.OutDirectory, reqID+".resp"))
+			if err != nil {
+				log.Println("重命名响应文件出错", err)
+				return
+			}
+
+			log.Println("写入响应文件完成:" + reqID)
 			return
 		}
 	}

@@ -67,6 +67,14 @@ func ParseConfig() error {
 	if err = makeDir(GlobalConfig.OutDirectory); err != nil {
 		return err
 	}
+	/*
+		if err = makeDir(filepath.Join(GlobalConfig.InDirectory, "tmp")); err != nil {
+			return err
+		}
+		if err = makeDir(filepath.Join(GlobalConfig.OutDirectory, "tmp")); err != nil {
+			return err
+		}
+	*/
 
 	return nil
 }
