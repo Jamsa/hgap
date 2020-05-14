@@ -2,6 +2,7 @@ package fsmon
 
 import (
 	"errors"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -118,5 +119,46 @@ func WaitForFile(filename string) error {
 			return nil
 		}
 		time.Sleep(time.Duration(config.GlobalConfig.FileCheckInterval) * time.Millisecond)
+	}
+}
+
+/*func contains(list []string, str string) bool {
+	for i := 0; i < len(list); i++ {
+		if list[i] == str {
+			return true
+		}
+	}
+	return false
+}*/
+
+var lastFiles = make(map[string]int64)
+
+// StartScan 扫描目录
+func StartScan(path string, createdHandler func(fileName string)) {
+	for {
+		//start := time.Now()
+		newFiles := make(map[string]int64)
+		files, err := ioutil.ReadDir(path)
+		if err != nil {
+			log.Println("获取目录文件列表出错", path, err)
+			continue
+		}
+		for i := 0; i < len(files); i++ {
+			file := files[i]
+			fileSize := file.Size()
+			fileName := file.Name()
+			if !file.IsDir() && fileSize > 0 {
+				newFiles[fileName] = fileSize
+				_, ok := lastFiles[fileName]
+				if ok {
+
+				} else {
+					log.Println("新的文件", fileName)
+					go createdHandler(filepath.Join(path, fileName))
+				}
+			}
+		}
+		lastFiles = newFiles
+		time.Sleep(time.Duration(config.GlobalConfig.FileScanInterval) * time.Millisecond)
 	}
 }

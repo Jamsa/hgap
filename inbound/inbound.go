@@ -173,7 +173,8 @@ func main() {
 		log.Fatal("解析配置文件出错:", err)
 	}
 	log.Printf("%+v\n", config.GlobalConfig)
-	go fsmon.StartWatcher(config.GlobalConfig.OutDirectory, fileChangeHandle)
+	//go fsmon.StartWatcher(config.GlobalConfig.OutDirectory, fileChangeHandle)
+	go fsmon.StartScan(config.GlobalConfig.OutDirectory, fileChangeHandle)
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", config.GlobalConfig.Port),

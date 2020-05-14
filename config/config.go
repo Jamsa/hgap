@@ -12,8 +12,10 @@ import (
 
 // Config 配置信息
 type Config struct {
-	Port              int               `json:"port"`              //监听端口
-	Timeout           int               `json:"timeout"`           //超时时间
+	Port    int `json:"port"`    //监听端口
+	Timeout int `json:"timeout"` //超时时间
+	//MonitoringMode    string            `json:"monitoringMode"`    //文件监控模式
+	FileScanInterval  int               `json:"fileScanInterval"`  //文件扫描间隔
 	FileCheckInterval int               `json:"fileCheckInterval"` //检查文件频度
 	KeepFiles         bool              `json:"keepFiles"`         //保存历史文件
 	InDirectory       string            `json:"inDirectory"`       //请求文件保存路径
@@ -25,6 +27,7 @@ type Config struct {
 var GlobalConfig = Config{
 	Port:              9090,
 	Timeout:           30000,
+	FileScanInterval:  300,
 	FileCheckInterval: 20,
 	KeepFiles:         true,
 	InDirectory:       "in/req",
