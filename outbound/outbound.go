@@ -23,12 +23,18 @@ func processRequest(fileName string) {
 			log.Println("处理请求文件", fileName, "出错", r)
 		}
 	}()
+	err := fsmon.WaitForFile(fileName)
+	if err != nil {
+		log.Println("等侍文件就绪时出错", err)
+		return
+	}
+
 	_, file := filepath.Split(fileName)
 	reqID := strings.TrimSuffix(file, filepath.Ext(file))
 
 	//读取请求信息
 	//f, err := os.Open( config.GlobalConfig.InDirectory + "/" + reqID + ".req")
-	f, err := os.Open(fileName)
+	f, err := os.Open(filepath.Join(config.GlobalConfig.InDirectory, reqID+".req"))
 	if err != nil {
 		log.Println("读取请求文件", reqID, "出错", err)
 		return
@@ -83,17 +89,29 @@ func processRequest(fileName string) {
 				return
 			}
 			//err = ioutil.WriteFile(config.GlobalConfig.OutDirectory+"/"+reqID+".resp", content, 0644)
-			err = ioutil.WriteFile(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".tmp"), content, 0644)
+
+			eof := "EOF" + reqID
+			content = append(content, []byte(eof)...)
+
+			err = ioutil.WriteFile(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".resp"), content, 0644)
 			if err != nil {
 				log.Println("写入响应文件出错", err)
 				return
 			}
 
-			err = os.Rename(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".tmp"), filepath.Join(config.GlobalConfig.OutDirectory, reqID+".resp"))
-			if err != nil {
-				log.Println("重命名响应文件出错", err)
-				return
-			}
+			/*
+				noti, err := os.Create(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".noti"))
+				if err != nil {
+					log.Println("写入请求文件出错", err)
+					return
+				}
+				noti.Close()
+				err = os.Rename(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".tmp"), filepath.Join(config.GlobalConfig.OutDirectory, reqID+".resp"))
+				if err != nil {
+					log.Println("重命名响应文件出错", err)
+					return
+				}
+			*/
 
 			log.Println("写入响应文件完成:" + reqID)
 			return
@@ -104,7 +122,7 @@ func processRequest(fileName string) {
 func main() {
 	err := config.ParseConfig()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("解析配置文出错", err)
 	}
 	log.Printf("%+v\n", config.GlobalConfig)
 	log.Println("开始监视请求文件目录")

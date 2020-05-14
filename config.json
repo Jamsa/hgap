@@ -1,7 +1,8 @@
 {
     "timeout": 30000,
     "port": 9090,
-    "keepFiles": false,
+    "fileCheckInterval": 20,
+    "keepFiles": true,
     "encrpt": false,
     "inDirectory": "in/req",
     "outDirectory": "out/resp",

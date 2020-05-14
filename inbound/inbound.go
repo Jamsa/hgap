@@ -37,6 +37,11 @@ func fileChangeHandle(fileName string) {
 			log.Println("处理请求文件", fileName, "出错", r)
 		}
 	}()
+	err := fsmon.WaitForFile(fileName)
+	if err != nil {
+		log.Println("等侍文件就绪时出错", err)
+		return
+	}
 	_, file := filepath.Split(fileName)
 	chName := strings.TrimSuffix(file, filepath.Ext(file))
 	ch, ok := reqs.Load(chName)
@@ -70,17 +75,28 @@ func index(w http.ResponseWriter, r *http.Request) {
 	log.Println("保存请求:" + reqID)
 	//log.Println(string(content))
 
-	err = ioutil.WriteFile(filepath.Join(config.GlobalConfig.InDirectory, reqID+".tmp"), content, 0644)
+	eof := "EOF" + reqID
+	content = append(content, []byte(eof)...)
+
+	err = ioutil.WriteFile(filepath.Join(config.GlobalConfig.InDirectory, reqID+".req"), content, 0644)
 	if err != nil {
 		log.Println("写入请求文件出错", err)
 		return
 	}
 
-	err = os.Rename(filepath.Join(config.GlobalConfig.InDirectory, reqID+".tmp"), filepath.Join(config.GlobalConfig.InDirectory, reqID+".req"))
-	if err != nil {
-		log.Println("重命名请求文件出错", err)
-		return
-	}
+	/*
+		noti, err := os.Create(filepath.Join(config.GlobalConfig.InDirectory, reqID+".noti"))
+		if err != nil {
+			log.Println("写入请求文件出错", err)
+			return
+		}
+		noti.Close()
+		err = os.Rename(filepath.Join(config.GlobalConfig.InDirectory, reqID+".tmp"), filepath.Join(config.GlobalConfig.InDirectory, reqID+".req"))
+		if err != nil {
+			log.Println("重命名请求文件出错", err)
+			return
+		}
+	*/
 
 	log.Println("写入请求文件完成:" + reqID)
 
@@ -111,7 +127,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		log.Println("读取响应:" + reqID)
 		f, err := os.Open(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".resp"))
 		if err != nil {
-			log.Fatal(" 开响应文件出错", err)
+			log.Println("打开响应文件出错", err)
 			return
 		}
 		defer f.Close()
@@ -154,7 +170,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 func main() {
 	err := config.ParseConfig()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("解析配置文件出错:", err)
 	}
 	log.Printf("%+v\n", config.GlobalConfig)
 	go fsmon.StartWatcher(config.GlobalConfig.OutDirectory, fileChangeHandle)

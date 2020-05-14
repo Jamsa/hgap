@@ -12,22 +12,24 @@ import (
 
 // Config 配置信息
 type Config struct {
-	Port         int               `json:"port"`         //监听端口
-	Timeout      int               `json:"timeout"`      //超时时间
-	KeepFiles    bool              `json:"keepFiles"`    //保存历史文件
-	InDirectory  string            `json:"inDirectory"`  //请求文件保存路径
-	OutDirectory string            `json:"outDirectory"` //响应文件保存路径
-	URLMapping   map[string]string `json:"urlMapping"`   //URL路径映射
+	Port              int               `json:"port"`              //监听端口
+	Timeout           int               `json:"timeout"`           //超时时间
+	FileCheckInterval int               `json:"fileCheckInterval"` //检查文件频度
+	KeepFiles         bool              `json:"keepFiles"`         //保存历史文件
+	InDirectory       string            `json:"inDirectory"`       //请求文件保存路径
+	OutDirectory      string            `json:"outDirectory"`      //响应文件保存路径
+	URLMapping        map[string]string `json:"urlMapping"`        //URL路径映射
 }
 
 // GlobalConfig 全局配置
 var GlobalConfig = Config{
-	Port:         9090,
-	Timeout:      30000,
-	KeepFiles:    true,
-	InDirectory:  "in/req",
-	OutDirectory: "out/resp",
-	URLMapping:   map[string]string{
+	Port:              9090,
+	Timeout:           30000,
+	FileCheckInterval: 20,
+	KeepFiles:         true,
+	InDirectory:       "in/req",
+	OutDirectory:      "out/resp",
+	URLMapping:        map[string]string{
 		// "/": "http://www.baidu.com",
 	},
 }
