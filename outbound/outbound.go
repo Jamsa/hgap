@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/base64"
 	"io"
 	"io/ioutil"
 	"log"
@@ -34,13 +35,31 @@ func processRequest(fileName string) {
 
 	//读取请求信息
 	//f, err := os.Open( config.GlobalConfig.InDirectory + "/" + reqID + ".req")
-	f, err := os.Open(filepath.Join(config.GlobalConfig.InDirectory, reqID+".req"))
-	if err != nil {
-		log.Println("读取请求文件", reqID, "出错", err)
-		return
+	var buf *bufio.Reader
+	if config.GlobalConfig.TextTransfer {
+		content, err := ioutil.ReadFile(filepath.Join(config.GlobalConfig.InDirectory, reqID+".req"))
+		if err != nil {
+			log.Println("读取请求文件", reqID, "出错", err)
+			return
+		}
+		if config.GlobalConfig.TextTransfer {
+			content, err = base64.StdEncoding.DecodeString(string(content))
+			if err != nil {
+				log.Println("解码文件", reqID, "出错", err)
+				return
+			}
+		}
+		buf = bufio.NewReader(strings.NewReader(string(content)))
+	} else {
+		f, err := os.Open(filepath.Join(config.GlobalConfig.InDirectory, reqID+".req"))
+		if err != nil {
+			log.Println("读取请求文件", reqID, "出错", err)
+			return
+		}
+		defer f.Close()
+		buf = bufio.NewReader(f)
 	}
-	defer f.Close()
-	buf := bufio.NewReader(f)
+
 	req, err := http.ReadRequest(buf)
 	if err != nil && err != io.EOF {
 		log.Println("读取请求信息出错", err)
@@ -73,6 +92,7 @@ func processRequest(fileName string) {
 			proxyReq.Header = make(http.Header)
 			for h, val := range req.Header {
 				proxyReq.Header[h] = val
+				//log.Println("#####:", h, "-----", val)
 			}
 
 			httpClient := &http.Client{}
@@ -91,6 +111,9 @@ func processRequest(fileName string) {
 			//err = ioutil.WriteFile(config.GlobalConfig.OutDirectory+"/"+reqID+".resp", content, 0644)
 
 			eof := "EOF" + reqID
+			if config.GlobalConfig.TextTransfer {
+				content = []byte(base64.StdEncoding.EncodeToString(content))
+			}
 			content = append(content, []byte(eof)...)
 
 			err = ioutil.WriteFile(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".resp"), content, 0644)

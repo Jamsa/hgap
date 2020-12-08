@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"runtime/debug"
 	"strings"
 	"time"
@@ -67,6 +68,13 @@ func checkFile(filename string, eof string, eoflen int) (result bool) {
 		}
 	}()
 
+	if runtime.GOOS == "windows" {
+		if err := os.Chmod(filename, 0600); err != nil {
+			log.Println("checkFile文件无法改为0600", err)
+			return false
+		}
+	}
+
 	file, err := os.OpenFile(filename, os.O_RDWR, 0644)
 	if err != nil {
 		log.Println("checkFile文件无法打开", err)
@@ -110,7 +118,7 @@ func WaitForFile(filename string) error {
 	eof := "EOF" + reqID
 	eoflen := len([]byte(eof))
 	for {
-		if time.Since(start) > time.Duration(config.GlobalConfig.Timeout) {
+		if time.Since(start) > time.Duration(config.GlobalConfig.Timeout)*time.Millisecond {
 			return errors.New("文件处理超时")
 		}
 

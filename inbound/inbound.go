@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -76,6 +77,9 @@ func index(w http.ResponseWriter, r *http.Request) {
 	//log.Println(string(content))
 
 	eof := "EOF" + reqID
+	if config.GlobalConfig.TextTransfer {
+		content = []byte(base64.StdEncoding.EncodeToString(content))
+	}
 	content = append(content, []byte(eof)...)
 
 	err = ioutil.WriteFile(filepath.Join(config.GlobalConfig.InDirectory, reqID+".req"), content, 0644)
@@ -125,13 +129,31 @@ func index(w http.ResponseWriter, r *http.Request) {
 		}()
 		//读取响应
 		log.Println("读取响应:" + reqID)
-		f, err := os.Open(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".resp"))
-		if err != nil {
-			log.Println("打开响应文件出错", err)
-			return
+		var buf *bufio.Reader
+		if config.GlobalConfig.TextTransfer {
+			content, err := ioutil.ReadFile(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".resp"))
+			if err != nil {
+				log.Println("读取响应文件", reqID, "出错", err)
+				return
+			}
+
+			content, err = base64.StdEncoding.DecodeString(string(content))
+			if err != nil {
+				log.Println("解码文件", reqID, "出错", err)
+				return
+			}
+
+			buf = bufio.NewReader(strings.NewReader(string(content)))
+		} else {
+			f, err := os.Open(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".resp"))
+			if err != nil {
+				log.Println("打开响应文件出错", err)
+				return
+			}
+			defer f.Close()
+			buf = bufio.NewReader(f)
 		}
-		defer f.Close()
-		buf := bufio.NewReader(f)
+
 		resp, err := http.ReadResponse(buf, r)
 		if err != nil {
 			log.Println("读取响应信息出错", err)

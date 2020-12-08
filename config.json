@@ -3,10 +3,11 @@
     "port": 9090,
     "fileCheckInterval": 20,
     "fileScanInterval": 200,
-    "keepFiles": false,
+    "keepFiles": true,
     "encrpt": false,
     "inDirectory": "in/req",
     "outDirectory": "out/resp",
+    "textTransfer": false,
     "urlMapping": {
         "/test": "http://localhost:3005/index.html",
         "/": "https://cn.bing.com/"

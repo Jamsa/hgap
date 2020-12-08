@@ -8,9 +8,26 @@ import (
 	"net"
 	"net/url"
 	"strings"
+	"time"
 )
 
 func main() {
+	start := time.Now()
+
+	println(time.Duration(30000))
+	println(time.Duration(30000) * time.Millisecond)
+	println(time.Duration(30) * time.Second)
+	//time.Since(start) > time.Duration(config.GlobalConfig.Timeout)*time.Millisecond {
+
+	time.Sleep(time.Duration(2) * time.Second)
+	println(time.Since(start).Milliseconds())
+	//println(time.Since(start).Milliseconds())
+	if time.Since(start) > time.Duration(2000)*time.Millisecond {
+		println("######")
+	}
+}
+
+func main1() {
 	l, err := net.Listen("tcp", ":8081")
 	if err != nil {
 		log.Panic(err)

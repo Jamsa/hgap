@@ -14,13 +14,14 @@ import (
 type Config struct {
 	Port    int `json:"port"`    //监听端口
 	Timeout int `json:"timeout"` //超时时间
-	//MonitoringMode    string            `json:"monitoringMode"`    //文件监控模式
+	//MonitoringMode    string            `json:"monitoringMode"`   //文件监控模式
 	FileScanInterval  int               `json:"fileScanInterval"`  //文件扫描间隔
 	FileCheckInterval int               `json:"fileCheckInterval"` //检查文件频度
 	KeepFiles         bool              `json:"keepFiles"`         //保存历史文件
 	InDirectory       string            `json:"inDirectory"`       //请求文件保存路径
 	OutDirectory      string            `json:"outDirectory"`      //响应文件保存路径
 	URLMapping        map[string]string `json:"urlMapping"`        //URL路径映射
+	TextTransfer      bool              `json:"textTransfer"`      //以文本方式传输文件
 }
 
 // GlobalConfig 全局配置
@@ -35,6 +36,7 @@ var GlobalConfig = Config{
 	URLMapping:        map[string]string{
 		// "/": "http://www.baidu.com",
 	},
+	TextTransfer: false,
 }
 
 // ParseConfig 解析配置文件
