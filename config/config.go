@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/pkg/errors"
 )
@@ -20,8 +19,9 @@ type Config struct {
 	KeepFiles         bool              `json:"keepFiles"`         //保存历史文件
 	InDirectory       string            `json:"inDirectory"`       //请求文件保存路径
 	OutDirectory      string            `json:"outDirectory"`      //响应文件保存路径
+	InTextTransfer    bool              `json:"inTextTransfer"`    //InBound以文本方式传输
+	OutTextTransfer   bool              `json:"outTextTransfer"`   //OutBound以文本方式传输
 	URLMapping        map[string]string `json:"urlMapping"`        //URL路径映射
-	TextTransfer      bool              `json:"textTransfer"`      //以文本方式传输文件
 }
 
 // GlobalConfig 全局配置
@@ -33,10 +33,11 @@ var GlobalConfig = Config{
 	KeepFiles:         true,
 	InDirectory:       "in/req",
 	OutDirectory:      "out/resp",
+	InTextTransfer:    false,
+	OutTextTransfer:   false,
 	URLMapping:        map[string]string{
 		// "/": "http://www.baidu.com",
 	},
-	TextTransfer: false,
 }
 
 // ParseConfig 解析配置文件
@@ -44,11 +45,11 @@ func ParseConfig() error {
 	var cfg string
 	var err error
 	cfg = "config.json"
-	if len(os.Args) > 1 {
+	/*if len(os.Args) > 1 {
 		if cfg, err = filepath.Abs(os.Args[1]); err != nil {
 			return errors.WithMessagef(err, "读取配置文件 %v 出错", os.Args[1])
 		}
-	}
+	}*/
 	info, err := os.Stat(cfg)
 	if !os.IsNotExist(err) && !info.IsDir() {
 		jsonFile, err := os.Open(cfg)

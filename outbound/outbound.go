@@ -1,4 +1,4 @@
-package main
+package outbound
 
 import (
 	"bufio"
@@ -36,18 +36,16 @@ func processRequest(fileName string) {
 	//读取请求信息
 	//f, err := os.Open( config.GlobalConfig.InDirectory + "/" + reqID + ".req")
 	var buf *bufio.Reader
-	if config.GlobalConfig.TextTransfer {
+	if config.GlobalConfig.InTextTransfer {
 		content, err := ioutil.ReadFile(filepath.Join(config.GlobalConfig.InDirectory, reqID+".req"))
 		if err != nil {
 			log.Println("读取请求文件", reqID, "出错", err)
 			return
 		}
-		if config.GlobalConfig.TextTransfer {
-			content, err = base64.StdEncoding.DecodeString(string(content))
-			if err != nil {
-				log.Println("解码文件", reqID, "出错", err)
-				return
-			}
+		content, err = base64.StdEncoding.DecodeString(string(content))
+		if err != nil {
+			log.Println("解码文件", reqID, "出错", err)
+			return
 		}
 		buf = bufio.NewReader(strings.NewReader(string(content)))
 	} else {
@@ -111,7 +109,7 @@ func processRequest(fileName string) {
 			//err = ioutil.WriteFile(config.GlobalConfig.OutDirectory+"/"+reqID+".resp", content, 0644)
 
 			eof := "EOF" + reqID
-			if config.GlobalConfig.TextTransfer {
+			if config.GlobalConfig.OutTextTransfer {
 				content = []byte(base64.StdEncoding.EncodeToString(content))
 			}
 			content = append(content, []byte(eof)...)
@@ -140,6 +138,15 @@ func processRequest(fileName string) {
 			return
 		}
 	}
+
+	log.Println("无匹配的转发路径", req.RequestURI)
+}
+
+// Start OutBound服务入口
+func Start() {
+	log.Println("开始监视请求文件目录")
+	//fsmon.StartWatcher(config.GlobalConfig.InDirectory, processRequest)
+	fsmon.StartScan(config.GlobalConfig.InDirectory, processRequest)
 }
 
 func main() {
@@ -148,7 +155,5 @@ func main() {
 		log.Fatal("解析配置文出错", err)
 	}
 	log.Printf("%+v\n", config.GlobalConfig)
-	log.Println("开始监视请求文件目录")
-	//fsmon.StartWatcher(config.GlobalConfig.InDirectory, processRequest)
-	fsmon.StartScan(config.GlobalConfig.InDirectory, processRequest)
+	Start()
 }

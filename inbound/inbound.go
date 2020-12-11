@@ -1,4 +1,4 @@
-package main
+package inbound
 
 import (
 	"bufio"
@@ -77,7 +77,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	//log.Println(string(content))
 
 	eof := "EOF" + reqID
-	if config.GlobalConfig.TextTransfer {
+	if config.GlobalConfig.InTextTransfer {
 		content = []byte(base64.StdEncoding.EncodeToString(content))
 	}
 	content = append(content, []byte(eof)...)
@@ -130,7 +130,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		//读取响应
 		log.Println("读取响应:" + reqID)
 		var buf *bufio.Reader
-		if config.GlobalConfig.TextTransfer {
+		if config.GlobalConfig.OutTextTransfer {
 			content, err := ioutil.ReadFile(filepath.Join(config.GlobalConfig.OutDirectory, reqID+".resp"))
 			if err != nil {
 				log.Println("读取响应文件", reqID, "出错", err)
@@ -189,13 +189,10 @@ func index(w http.ResponseWriter, r *http.Request) {
 	//cleanUp()
 }
 
-func main() {
-	err := config.ParseConfig()
-	if err != nil {
-		log.Fatal("解析配置文件出错:", err)
-	}
-	log.Printf("%+v\n", config.GlobalConfig)
+// Start InBound服务入口
+func Start() {
 	//go fsmon.StartWatcher(config.GlobalConfig.OutDirectory, fileChangeHandle)
+	log.Println("开始监视响应文件目录")
 	go fsmon.StartScan(config.GlobalConfig.OutDirectory, fileChangeHandle)
 
 	server := &http.Server{
@@ -208,8 +205,17 @@ func main() {
 
 	log.Println("开始监听", config.GlobalConfig.Port, "...")
 	//err = http.ListenAndServe(, nil)
-	err = server.ListenAndServe()
+	err := server.ListenAndServe()
 	if err != nil {
 		log.Fatal("监听出错: ", err)
 	}
+}
+
+func main() {
+	err := config.ParseConfig()
+	if err != nil {
+		log.Fatal("解析配置文件出错:", err)
+	}
+	log.Printf("%+v\n", config.GlobalConfig)
+	Start()
 }
