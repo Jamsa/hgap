@@ -35,9 +35,19 @@ func main() {
 
 	switch subcmd {
 	case "inbound":
-		inbound.Start()
+		//inbound.Start()
+		inb, err := inbound.New(config.GlobalConfig)
+		if err != nil {
+			log.Fatal("无法启动InBound服务", err)
+		}
+		inb.Start()
 	case "outbound":
-		outbound.Start()
+		//outbound.Start()
+		outb, err := outbound.New(config.GlobalConfig)
+		if err != nil {
+			log.Fatal("无法启动OutBound服务", err)
+		}
+		outb.Start()
 	default:
 		fmt.Print(help)
 		os.Exit(0)

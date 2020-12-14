@@ -7,8 +7,10 @@
     "encrpt": false,
     "inDirectory": "in/req",
     "outDirectory": "out/resp",
-    "inTextTransfer": true,
+    "inTextTransfer": false,
     "outTextTransfer": false,
+    "inTransferType": "file",
+    "outTransferType": "file",
     "urlMapping": {
         "/test": "http://localhost:3005/index.html",
         "/": "https://cn.bing.com/"

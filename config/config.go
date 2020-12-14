@@ -14,14 +14,24 @@ type Config struct {
 	Port    int `json:"port"`    //监听端口
 	Timeout int `json:"timeout"` //超时时间
 	//MonitoringMode    string            `json:"monitoringMode"`   //文件监控模式
-	FileScanInterval  int               `json:"fileScanInterval"`  //文件扫描间隔
-	FileCheckInterval int               `json:"fileCheckInterval"` //检查文件频度
-	KeepFiles         bool              `json:"keepFiles"`         //保存历史文件
-	InDirectory       string            `json:"inDirectory"`       //请求文件保存路径
-	OutDirectory      string            `json:"outDirectory"`      //响应文件保存路径
-	InTextTransfer    bool              `json:"inTextTransfer"`    //InBound以文本方式传输
-	OutTextTransfer   bool              `json:"outTextTransfer"`   //OutBound以文本方式传输
-	URLMapping        map[string]string `json:"urlMapping"`        //URL路径映射
+	FileScanInterval  int    `json:"fileScanInterval"`  //文件扫描间隔
+	FileCheckInterval int    `json:"fileCheckInterval"` //检查文件频度
+	KeepFiles         bool   `json:"keepFiles"`         //保存历史文件
+	InDirectory       string `json:"inDirectory"`       //请求文件保存路径
+	OutDirectory      string `json:"outDirectory"`      //响应文件保存路径
+	InTextTransfer    bool   `json:"inTextTransfer"`    //InBound以文本方式传输
+	OutTextTransfer   bool   `json:"outTextTransfer"`   //OutBound以文本方式传输
+
+	/*
+		InTransferHost  string `json:"inTransferHost"`  //InBound传输监听主机
+		OutTransferHost string `json:"outTransferHost"` //OutBound传输监听主机
+		InTransferPort  int    `json:"inTransferPort"`  //InBound的传输端口
+		OutTransferPort int    `json:"outTransferPort"` //OutBound的传输端口
+	*/
+
+	InTransferType  string            `json:"inTransferType"`  //InBound传输类型
+	OutTransferType string            `json:"outTransferType"` //OutBound传输类型
+	URLMapping      map[string]string `json:"urlMapping"`      //URL路径映射
 }
 
 // GlobalConfig 全局配置
@@ -35,7 +45,10 @@ var GlobalConfig = Config{
 	OutDirectory:      "out/resp",
 	InTextTransfer:    false,
 	OutTextTransfer:   false,
-	URLMapping:        map[string]string{
+
+	InTransferType:  "file",
+	OutTransferType: "file",
+	URLMapping:      map[string]string{
 		// "/": "http://www.baidu.com",
 	},
 }

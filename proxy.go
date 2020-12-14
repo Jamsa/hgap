@@ -17,7 +17,7 @@ func Serve(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func main() {
+func mainP() {
 	http.HandleFunc("/", Serve)
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {

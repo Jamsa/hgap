@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func main() {
+func mainP1() {
 	start := time.Now()
 
 	println(time.Duration(30000))
