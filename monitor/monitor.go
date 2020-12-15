@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/jamsa/hgap/config"
 )
@@ -34,9 +35,9 @@ type Monitor struct {
 }*/
 
 // NewMonitor 创建数据监听器
-func NewMonitor(inBound bool, cfg config.Config) (IMonitor, error) {
+func NewMonitor(inBound bool, cfg *config.Config) (IMonitor, error) {
 	var result IMonitor
-	if inBound && cfg.InTransferType == "file" {
+	if inBound && cfg.OutTransferType == "file" {
 		fileMonitor := FileMonitor{
 			Monitor: &Monitor{
 				textTransfer: cfg.OutTextTransfer,
@@ -51,7 +52,7 @@ func NewMonitor(inBound bool, cfg config.Config) (IMonitor, error) {
 		result = &fileMonitor
 		return result, nil
 	}
-	if !inBound && cfg.OutTransferType == "file" {
+	if !inBound && cfg.InTransferType == "file" {
 		fileMonitor := FileMonitor{
 			Monitor: &Monitor{
 				textTransfer: cfg.InTextTransfer,
@@ -62,6 +63,32 @@ func NewMonitor(inBound bool, cfg config.Config) (IMonitor, error) {
 			checkInterval: cfg.FileCheckInterval,
 			fileExt:       ".req",
 			keepFile:      cfg.KeepFiles,
+		}
+		result = &fileMonitor
+		return result, nil
+	}
+	if inBound && cfg.OutTransferType == "udp" {
+		fileMonitor := UDPMonitor{
+			Monitor: &Monitor{
+				textTransfer: cfg.OutTextTransfer,
+			},
+			host:     cfg.InMonitorHost,
+			port:     cfg.InMonitorPort,
+			timeout:  cfg.Timeout,
+			contents: &sync.Map{},
+		}
+		result = &fileMonitor
+		return result, nil
+	}
+	if !inBound && cfg.InTransferType == "udp" {
+		fileMonitor := UDPMonitor{
+			Monitor: &Monitor{
+				textTransfer: cfg.InTextTransfer,
+			},
+			host:     cfg.OutMonitorHost,
+			port:     cfg.OutMonitorPort,
+			timeout:  cfg.Timeout,
+			contents: &sync.Map{},
 		}
 		result = &fileMonitor
 		return result, nil

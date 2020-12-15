@@ -27,23 +27,23 @@ func main() {
 		args = args[1:]
 	}
 
-	err := config.ParseConfig()
+	cfg, err := config.ParseConfig()
 	if err != nil {
 		log.Fatal("解析配置文出错", err)
 	}
-	log.Printf("%+v\n", config.GlobalConfig)
+	log.Printf("%+v\n", cfg)
 
 	switch subcmd {
 	case "inbound":
 		//inbound.Start()
-		inb, err := inbound.New(config.GlobalConfig)
+		inb, err := inbound.New(cfg)
 		if err != nil {
 			log.Fatal("无法启动InBound服务", err)
 		}
 		inb.Start()
 	case "outbound":
 		//outbound.Start()
-		outb, err := outbound.New(config.GlobalConfig)
+		outb, err := outbound.New(cfg)
 		if err != nil {
 			log.Fatal("无法启动OutBound服务", err)
 		}

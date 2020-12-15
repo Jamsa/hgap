@@ -9,8 +9,12 @@
     "outDirectory": "out/resp",
     "inTextTransfer": false,
     "outTextTransfer": false,
-    "inTransferType": "file",
-    "outTransferType": "file",
+    "inTransferType": "udp",
+    "outTransferType": "udp",
+    "inMonitorHost":  "0.0.0.0",
+	"inMonitorPort":  9091,
+	"outMonitorHost": "0.0.0.0",
+	"outMonitorPort": 9092,
     "urlMapping": {
         "/test": "http://localhost:3005/index.html",
         "/": "https://cn.bing.com/"

@@ -19,8 +19,7 @@ type Transfer struct {
 }
 
 // NewTransfer 创建数据传输对象
-func NewTransfer(inBound bool, cfg config.Config) (ITransfer, error) {
-	//TODO 根据config返回合适的Transfer
+func NewTransfer(inBound bool, cfg *config.Config) (ITransfer, error) {
 	var result ITransfer
 	if inBound && cfg.InTransferType == "file" {
 		fileTransfer := FileTransfer{
@@ -42,6 +41,28 @@ func NewTransfer(inBound bool, cfg config.Config) (ITransfer, error) {
 			path:     cfg.OutDirectory,
 			fileExt:  ".resp",
 			keepFile: cfg.KeepFiles,
+		}
+		result = &fileTransfer
+		return result, nil
+	}
+	if inBound && cfg.InTransferType == "udp" {
+		fileTransfer := UDPTransfer{
+			Transfer: &Transfer{
+				textTransfer: cfg.InTextTransfer,
+			},
+			host: cfg.OutMonitorHost,
+			port: cfg.OutMonitorPort,
+		}
+		result = &fileTransfer
+		return result, nil
+	}
+	if !inBound && cfg.OutTransferType == "udp" {
+		fileTransfer := UDPTransfer{
+			Transfer: &Transfer{
+				textTransfer: cfg.OutTextTransfer,
+			},
+			host: cfg.InMonitorHost,
+			port: cfg.InMonitorPort,
 		}
 		result = &fileTransfer
 		return result, nil

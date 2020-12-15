@@ -22,39 +22,41 @@ type Config struct {
 	InTextTransfer    bool   `json:"inTextTransfer"`    //InBound以文本方式传输
 	OutTextTransfer   bool   `json:"outTextTransfer"`   //OutBound以文本方式传输
 
-	/*
-		InTransferHost  string `json:"inTransferHost"`  //InBound传输监听主机
-		OutTransferHost string `json:"outTransferHost"` //OutBound传输监听主机
-		InTransferPort  int    `json:"inTransferPort"`  //InBound的传输端口
-		OutTransferPort int    `json:"outTransferPort"` //OutBound的传输端口
-	*/
+	InMonitorHost  string `json:"inMonitorHost"`  //InBound传输监听主机
+	OutMonitorHost string `json:"outMonitorHost"` //OutBound传输监听主机
+	InMonitorPort  int    `json:"inMonitorPort"`  //InBound的传输端口
+	OutMonitorPort int    `json:"outMonitorPort"` //OutBound的传输端口
 
 	InTransferType  string            `json:"inTransferType"`  //InBound传输类型
 	OutTransferType string            `json:"outTransferType"` //OutBound传输类型
 	URLMapping      map[string]string `json:"urlMapping"`      //URL路径映射
 }
 
-// GlobalConfig 全局配置
-var GlobalConfig = Config{
-	Port:              9090,
-	Timeout:           30000,
-	FileScanInterval:  300,
-	FileCheckInterval: 20,
-	KeepFiles:         true,
-	InDirectory:       "in/req",
-	OutDirectory:      "out/resp",
-	InTextTransfer:    false,
-	OutTextTransfer:   false,
-
-	InTransferType:  "file",
-	OutTransferType: "file",
-	URLMapping:      map[string]string{
-		// "/": "http://www.baidu.com",
-	},
-}
-
 // ParseConfig 解析配置文件
-func ParseConfig() error {
+func ParseConfig() (*Config, error) {
+	// GlobalConfig 全局配置
+	var GlobalConfig = &Config{
+		Port:              9090,
+		Timeout:           30000,
+		FileScanInterval:  300,
+		FileCheckInterval: 20,
+		KeepFiles:         true,
+		InDirectory:       "in/req",
+		OutDirectory:      "out/resp",
+		InTextTransfer:    false,
+		OutTextTransfer:   false,
+
+		InMonitorHost:  "0.0.0.0",
+		InMonitorPort:  9091,
+		OutMonitorHost: "0.0.0.0",
+		OutMonitorPort: 9092,
+
+		InTransferType:  "file",
+		OutTransferType: "file",
+		URLMapping:      map[string]string{
+			// "/": "http://www.baidu.com",
+		},
+	}
 	var cfg string
 	var err error
 	cfg = "config.json"
@@ -67,26 +69,26 @@ func ParseConfig() error {
 	if !os.IsNotExist(err) && !info.IsDir() {
 		jsonFile, err := os.Open(cfg)
 		if err != nil {
-			return errors.WithMessagef(err, "打开配置文件 %v 出错", cfg)
+			return nil, errors.WithMessagef(err, "打开配置文件 %v 出错", cfg)
 		}
 
 		defer jsonFile.Close()
 
 		byteValue, err := ioutil.ReadAll(jsonFile)
 		if err != nil {
-			return errors.WithMessagef(err, "读取json配置文件 %v 出错", cfg)
+			return nil, errors.WithMessagef(err, "读取json配置文件 %v 出错", cfg)
 		}
 
 		if err = json.Unmarshal([]byte(byteValue), &GlobalConfig); err != nil {
-			return errors.WithMessagef(err, "解析json配置文件 %v 出错", cfg)
+			return nil, errors.WithMessagef(err, "解析json配置文件 %v 出错", cfg)
 		}
 	}
 
 	if err = makeDir(GlobalConfig.InDirectory); err != nil {
-		return err
+		return nil, err
 	}
 	if err = makeDir(GlobalConfig.OutDirectory); err != nil {
-		return err
+		return nil, err
 	}
 	/*
 		if err = makeDir(filepath.Join(GlobalConfig.InDirectory, "tmp")); err != nil {
@@ -97,7 +99,7 @@ func ParseConfig() error {
 		}
 	*/
 
-	return nil
+	return GlobalConfig, nil
 }
 
 func makeDir(dir string) error {
