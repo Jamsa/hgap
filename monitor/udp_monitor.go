@@ -45,7 +45,7 @@ func (monitor *UDPMonitor) Start(onReady OnReady) {
 
 	go monitor.cleanUp()
 	for {
-		buf := make([]byte, 2048)
+		buf := make([]byte, packet.MTU*2)
 
 		n, _, err := listener.ReadFromUDP(buf)
 		if err != nil {

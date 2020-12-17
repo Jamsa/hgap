@@ -4,6 +4,9 @@ import (
 	"math"
 )
 
+// MTU 最大传输单元
+const MTU = 1024
+
 // Packet 数据包分组
 type Packet struct {
 	ID     string //标识
@@ -11,6 +14,22 @@ type Packet struct {
 	Begin  int    //开始位置
 	Size   int    //数据长度
 	Data   []byte //数据
+}
+
+// FrameType 数据帧类型
+type FrameType int
+
+// 数据帧类型定义
+const (
+	FrameTypeHELLO FrameType = 0
+	FrameTypeDATA  FrameType = 1
+)
+
+// Frame 数据帧，用于在Tcp等非固定分组大小的模式下传输数据
+type Frame struct {
+	FrameType FrameType // 帧类型
+	Length    int       // 数据长度
+	Data      []byte    // 数据
 }
 
 /*
@@ -67,7 +86,7 @@ func (iter *Iterator) Next() *Packet {
 		ID:     iter.id,
 		Length: length,
 		Begin:  begin,
-		Size:   iter.size,
+		Size:   end - begin, // iter.size
 		Data:   iter.data[begin:end],
 	}
 
@@ -75,7 +94,7 @@ func (iter *Iterator) Next() *Packet {
 }
 
 // NewIterator 新建迭代器
-func NewIterator(id string, data []byte) *Iterator {
+func NewIterator(id string, data []byte, size int) *Iterator {
 	return &Iterator{
 		id:      id,
 		size:    1024, //分组长
