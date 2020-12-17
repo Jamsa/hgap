@@ -33,6 +33,19 @@ type UDPMonitor struct {
 	timeout  int       //等侍文件就绪的超时时间(ms)
 }
 
+func (monitor *UDPMonitor) readPacket(buf []byte, n int) {
+	//log.Printf("接收包长度:%v\n", n)
+	pack := &packet.Packet{}
+	err := gob.NewDecoder(bytes.NewReader(buf[:n])).Decode(pack)
+	if err != nil {
+		log.Printf("UDP数据包解码错误: %s", err)
+		return
+		//continue
+	}
+	log.Printf("接收分组: %+v,%+v,%+v,%+v,%v\n", pack.ID, pack.Length, pack.Begin, pack.Size, n)
+	monitor.packetReceive(pack)
+}
+
 // Start 启动监视
 func (monitor *UDPMonitor) Start(onReady OnReady) {
 	monitor.onReady = onReady
@@ -52,15 +65,7 @@ func (monitor *UDPMonitor) Start(onReady OnReady) {
 			log.Printf("UDP数据读取错误: %s", err)
 			continue
 		}
-		//log.Printf("接收包长度:%v\n", n)
-		pack := &packet.Packet{}
-		err = gob.NewDecoder(bytes.NewReader(buf[:n])).Decode(pack)
-		if err != nil {
-			log.Printf("UDP数据包解码错误: %s", err)
-			continue
-		}
-		log.Printf("接收分组: %+v,%+v,%+v,%+v,%v\n", pack.ID, pack.Length, pack.Begin, pack.Size, n)
-		go monitor.packetReceive(pack)
+		go monitor.readPacket(buf, n)
 	}
 }
 
