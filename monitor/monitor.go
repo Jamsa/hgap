@@ -93,5 +93,31 @@ func NewMonitor(inBound bool, cfg *config.Config) (IMonitor, error) {
 		result = &fileMonitor
 		return result, nil
 	}
+	if inBound && cfg.OutTransferType == "tcp" {
+		fileMonitor := TCPMonitor{
+			Monitor: &Monitor{
+				textTransfer: cfg.OutTextTransfer,
+			},
+			host:     cfg.InMonitorHost,
+			port:     cfg.InMonitorPort,
+			timeout:  cfg.Timeout,
+			contents: &sync.Map{},
+		}
+		result = &fileMonitor
+		return result, nil
+	}
+	if !inBound && cfg.InTransferType == "tcp" {
+		fileMonitor := TCPMonitor{
+			Monitor: &Monitor{
+				textTransfer: cfg.InTextTransfer,
+			},
+			host:     cfg.OutMonitorHost,
+			port:     cfg.OutMonitorPort,
+			timeout:  cfg.Timeout,
+			contents: &sync.Map{},
+		}
+		result = &fileMonitor
+		return result, nil
+	}
 	return nil, errors.New("无法创建Monitor")
 }

@@ -1,11 +1,9 @@
 package packet
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/binary"
 	"encoding/gob"
-	"io"
 	"math"
 )
 
@@ -86,7 +84,7 @@ func (iter *Iterator) Next() *Packet {
 func NewIterator(id string, data []byte, size int) *Iterator {
 	return &Iterator{
 		id:      id,
-		size:    1024, //分组长
+		size:    size, //1024, //分组长
 		data:    data,
 		current: 0,
 	}
@@ -97,7 +95,7 @@ type FrameType int32
 
 // 数据帧类型定义
 const (
-	FrameTypeHELLO FrameType = 0
+	FrameTypeCLOSE FrameType = 0
 	FrameTypeDATA  FrameType = 1
 )
 
@@ -111,51 +109,30 @@ type Frame struct {
 	Data      []byte    // 数据
 }
 
-// Write Frame编码
-func (frame *Frame) Write(writer io.Writer) error {
-	err := binary.Write(writer, binary.BigEndian, FrameMagic)
-	err = binary.Write(writer, binary.BigEndian, frame.Length)
-	err = binary.Write(writer, binary.BigEndian, frame.FrameType)
-	err = binary.Write(writer, binary.BigEndian, frame.Data)
-	return err
+// Encode Frame编码
+func (frame *Frame) Encode() ([]byte, error) {
+	var buf bytes.Buffer
+	err := binary.Write(&buf, binary.BigEndian, FrameMagic)
+	err = binary.Write(&buf, binary.BigEndian, frame.Length)
+	err = binary.Write(&buf, binary.BigEndian, frame.FrameType)
+	_, err = buf.Write(frame.Data)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }
 
-func splitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
-	//FrameMagic+FrameType+Length 3个int32的长度
-	if !atEOF &&
-		len(data) > 4*3 &&
-		binary.BigEndian.Uint32(data[:4]) == FrameMagic {
-		var t, l int32
-		err := binary.Read(bytes.NewReader(data[4:8]), binary.BigEndian, &t)
-		err = binary.Read(bytes.NewReader(data[8:12]), binary.BigEndian, &l)
-		if err != nil {
-			//TODO 读取错误时，adv和token该返回什么值
-			return 0, nil, err
-		}
-		end := 4*3 + l
-		//消费end长的数据，返回从第4位开始的完整Frame数据
-		return int(end), data[4:end], nil
+// Decode Frame解码
+func (frame *Frame) Decode(data []byte) error {
+	var t, l int32
+	err := binary.Read(bytes.NewReader(data[:4]), binary.BigEndian, &t)
+	err = binary.Read(bytes.NewReader(data[4:8]), binary.BigEndian, &l)
+	if err != nil {
+		return err
 	}
-	return
-}
-
-// Reader Frame解码
-func (frame *Frame) Read(reader io.Reader) error {
-	scanner := bufio.NewScanner(reader)
-	scanner.Split(splitFunc)
-	s := scanner.Scan()
-	if s {
-		data := scanner.Bytes()
-		var t, l int32
-		err := binary.Read(bytes.NewReader(data[:4]), binary.BigEndian, &t)
-		err = binary.Read(bytes.NewReader(data[4:8]), binary.BigEndian, &l)
-		if err != nil {
-			return err
-		}
-		frame.FrameType = FrameType(t)
-		frame.Length = l
-		frame.Data = data[8:]
-		return nil
-	}
+	frame.FrameType = FrameType(t)
+	frame.Length = l
+	frame.Data = data[8:]
+	//log.Printf("解码数据帧:%v,%v", frame.FrameType, frame.Length)
 	return nil
 }
