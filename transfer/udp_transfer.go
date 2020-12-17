@@ -1,8 +1,6 @@
 package transfer
 
 import (
-	"bytes"
-	"encoding/gob"
 	"log"
 	"net"
 
@@ -33,16 +31,19 @@ func (transfer *UDPTransfer) Send(reqID string, data []byte) {
 	iter := packet.NewIterator(reqID, data, packet.MTU)
 	for iter.HasNext() {
 		pack := iter.Next()
-
-		var buf bytes.Buffer
-		enc := gob.NewEncoder(&buf)
-		//TODO 错误处理
-		err := enc.Encode(pack)
+		data, err := pack.Encode()
+		/*
+			var buf bytes.Buffer
+			enc := gob.NewEncoder(&buf)
+			//T ODO 错误处理
+			err := enc.Encode(pack)
+		*/
 		if err != nil {
 			log.Println("包编码出错", err)
 			continue
 		}
-		len, err := conn.Write(buf.Bytes())
+		//len, err := conn.Write(buf.Bytes())
+		len, err := conn.Write(data)
 		if err != nil {
 			log.Println("包发送失败", err)
 			continue

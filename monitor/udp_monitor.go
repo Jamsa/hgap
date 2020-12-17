@@ -2,7 +2,6 @@ package monitor
 
 import (
 	"bytes"
-	"encoding/gob"
 	"errors"
 	"fmt"
 	"log"
@@ -36,7 +35,8 @@ type UDPMonitor struct {
 func (monitor *UDPMonitor) readPacket(buf []byte, n int) {
 	//log.Printf("接收包长度:%v\n", n)
 	pack := &packet.Packet{}
-	err := gob.NewDecoder(bytes.NewReader(buf[:n])).Decode(pack)
+	err := pack.Decode(buf[:n])
+	//err := gob.NewDecoder(bytes.NewReader(buf[:n])).Decode(pack)
 	if err != nil {
 		log.Printf("UDP数据包解码错误: %s", err)
 		return
