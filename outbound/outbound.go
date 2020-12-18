@@ -5,10 +5,11 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jamsa/hgap/config"
 	"github.com/jamsa/hgap/monitor"

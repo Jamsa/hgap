@@ -3,9 +3,10 @@ package transfer
 import (
 	"encoding/base64"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // FileTransfer 文件传输

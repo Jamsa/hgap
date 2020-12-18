@@ -1,9 +1,9 @@
 package monitor
 
 import (
-	"fmt"
-	"log"
 	"net"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jamsa/hgap/packet"
 )
@@ -37,7 +37,7 @@ func (monitor *UDPMonitor) Start(onReady OnReady) {
 	monitor.onReady = onReady
 	listener, err := net.ListenUDP("udp", &net.UDPAddr{IP: net.ParseIP(monitor.host), Port: monitor.port})
 	if err != nil {
-		fmt.Println("UDP监听失败", err)
+		log.Println("UDP监听失败", err)
 		return
 	}
 	log.Println("开始UDP包监视", listener.LocalAddr().String())

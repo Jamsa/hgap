@@ -1,7 +1,7 @@
 package transfer
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 )
 
 // NetTransfer 传输

@@ -2,9 +2,10 @@ package transfer
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jamsa/hgap/packet"
 )
@@ -43,7 +44,6 @@ func (transfer *TCPTransfer) Send(reqID string, data []byte) {
 	for iter.HasNext() {
 		pack := iter.Next()
 		data, err := pack.Encode()
-		//TODO 错误处理
 		if err != nil {
 			log.Println("TCP包编码出错", err)
 			continue

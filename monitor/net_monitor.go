@@ -3,10 +3,11 @@ package monitor
 import (
 	"bytes"
 	"errors"
-	"log"
 	"sort"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jamsa/hgap/packet"
 )

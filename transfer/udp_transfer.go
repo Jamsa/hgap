@@ -1,8 +1,9 @@
 package transfer
 
 import (
-	"log"
 	"net"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jamsa/hgap/packet"
 )
