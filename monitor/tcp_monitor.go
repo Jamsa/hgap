@@ -63,7 +63,7 @@ func (monitor *TCPMonitor) readFrame(conn net.Conn) error {
 			return err
 		}
 
-		log.Debugf("收到数据帧:%v,%v", frame.FrameType, frame.Length)
+		log.Debugf("收到数据帧:%v,%v", frame.FrameType, frame.Length)
 		if frame.FrameType == packet.FrameTypeCLOSE {
 			log.Printf("接收到关闭通知")
 			return nil
