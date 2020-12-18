@@ -24,11 +24,11 @@ func (monitor *UDPMonitor) readPacket(buf []byte, n int) {
 	err := pack.Decode(buf[:n])
 	//err := gob.NewDecoder(bytes.NewReader(buf[:n])).Decode(pack)
 	if err != nil {
-		log.Printf("UDP数据包解码错误: %s", err)
+		log.Errorf("UDP数据包解码错误: %s", err)
 		return
 		//continue
 	}
-	log.Printf("接收分组: %+v,%+v,%+v,%+v,%v\n", pack.ID, pack.Length, pack.Begin, pack.Size, n)
+	log.Debugf("接收分组: %+v,%+v,%+v,%+v,%v\n", pack.ID, pack.Length, pack.Begin, pack.Size, n)
 	monitor.packetReceive(pack)
 }
 
@@ -37,7 +37,7 @@ func (monitor *UDPMonitor) Start(onReady OnReady) {
 	monitor.onReady = onReady
 	listener, err := net.ListenUDP("udp", &net.UDPAddr{IP: net.ParseIP(monitor.host), Port: monitor.port})
 	if err != nil {
-		log.Println("UDP监听失败", err)
+		log.Error("UDP监听失败", err)
 		return
 	}
 	log.Println("开始UDP包监视", listener.LocalAddr().String())
@@ -48,7 +48,7 @@ func (monitor *UDPMonitor) Start(onReady OnReady) {
 
 		n, _, err := listener.ReadFromUDP(buf)
 		if err != nil {
-			log.Printf("UDP数据读取错误: %s", err)
+			log.Errorf("UDP数据读取错误: %s", err)
 			continue
 		}
 		go monitor.readPacket(buf, n)

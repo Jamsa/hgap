@@ -21,7 +21,7 @@ func (transfer *UDPTransfer) Send(reqID string, data []byte) {
 	dstAddr := &net.UDPAddr{IP: sip, Port: transfer.port}
 	conn, err := net.DialUDP("udp", srcAddr, dstAddr)
 	if err != nil {
-		log.Println("连接UDP服务器失败", err)
+		log.Error("连接UDP服务器失败", err)
 		return
 	}
 	defer conn.Close()
@@ -37,16 +37,16 @@ func (transfer *UDPTransfer) Send(reqID string, data []byte) {
 			err := enc.Encode(pack)
 		*/
 		if err != nil {
-			log.Println("包编码出错", err)
+			log.Error("包编码出错", err)
 			continue
 		}
 		//len, err := conn.Write(buf.Bytes())
 		len, err := conn.Write(data)
 		if err != nil {
-			log.Println("包发送失败", err)
+			log.Error("包发送失败", err)
 			continue
 		}
 		//time.Sleep(time.Duration)
-		log.Printf("发送分组: %+v,%+v,%+v,%+v,%v\n", pack.ID, pack.Length, pack.Begin, pack.Size, len)
+		log.Debugf("发送分组: %+v,%+v,%+v,%+v,%v\n", pack.ID, pack.Length, pack.Begin, pack.Size, len)
 	}
 }

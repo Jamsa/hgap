@@ -18,6 +18,7 @@ type LogConfig struct {
 	File         string `json:"file"`         //日志文件
 	MaxAge       int    `json:"maxAge"`       //保存时间
 	RotationTime int    `json:"rotationTime"` //滚动时间
+	Level        string `json:"level"`        //日志级别
 }
 
 // Config 配置信息
@@ -73,8 +74,9 @@ func ParseConfig() (*Config, error) {
 			Output:       "stdout,file",
 			Rotate:       true,
 			File:         path.Join("log", "hgap"),
-			MaxAge:       60 * 60 * 6, // 6小时
-			RotationTime: 60 * 60 * 1, // 1小时
+			MaxAge:       60 * 6, // 6小时
+			RotationTime: 60 * 1, // 1小时
+			Level:        "debug",
 		},
 	}
 	var cfg string

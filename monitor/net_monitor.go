@@ -33,7 +33,7 @@ type NetMonitor struct {
 
 // Remove 删除数据
 func (monitor *NetMonitor) Remove(reqID string) {
-	log.Println("删除接收的数据" + reqID)
+	log.Println("删除接收的数据", reqID)
 	monitor.contents.Delete(reqID)
 }
 
@@ -68,7 +68,7 @@ func (monitor *NetMonitor) cleanUp() {
 func (monitor *NetMonitor) packetReceive(pack *packet.Packet) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("处理UDP分包", pack, "出错", r)
+			log.Println("处理数据分包", pack, "出错", r)
 		}
 	}()
 
@@ -107,7 +107,7 @@ func (monitor *NetMonitor) readAll(reqID string) ([]byte, error) {
 			return left.Begin < right.Begin
 		})
 		for _, v := range c.packets {
-			log.Println("收集数据:", v.ID, v.Begin, "/", v.Length, v.Size)
+			//log.Println("收集数据:", v.ID, v.Begin, "/", v.Length, v.Size)
 			result.Write(v.Data)
 		}
 		return result.Bytes(), nil

@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"strings"
 	"time"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
@@ -23,26 +25,40 @@ var help = `
 `
 
 func initLog(subcmd string, cfg *config.LogConfig) {
+	level, err := log.ParseLevel(cfg.Level)
+	if err != nil {
+		level = log.InfoLevel
+	} else {
+		log.SetLevel(level)
+	}
+
+	//log.Println(log.GetLevel().String())
+
 	//log.SetFormatter(&log.JSONFormatter{})
+	if !strings.Contains(cfg.Output, "stdout") {
+		log.SetOutput(ioutil.Discard)
+	}
 
-	writer, _ := rotatelogs.New(
-		cfg.File+"-"+subcmd+".%Y%m%d%H%M.log",
-		rotatelogs.WithLinkName(cfg.File+".log"),                                 // 生成软链，指向最新日志文件
-		rotatelogs.WithMaxAge(time.Duration(cfg.MaxAge)*time.Second),             // 文件最大保存时间
-		rotatelogs.WithRotationTime(time.Duration(cfg.RotationTime)*time.Second), // 日志切割时间间隔
-	)
-	//pathMap := lfshook.WriterMap{
-	//logrus.InfoLevel:  writer,
-	//logrus.PanicLevel: writer,
-	//}
-	/*hook =Hooks.Add(lfshook.NewHook(
-		pathMap,
-		&logrus.JSONFormatter{},
-	))*/
-	hook := lfshook.NewHook(writer, &log.TextFormatter{})
-	//lfshook.NewHook()
+	if strings.Contains(cfg.Output, "file") {
+		writer, _ := rotatelogs.New(
+			cfg.File+"-"+subcmd+".%Y%m%d%H%M.log",
+			rotatelogs.WithLinkName(cfg.File+".log"),                                 // 生成软链，指向最新日志文件
+			rotatelogs.WithMaxAge(time.Duration(cfg.MaxAge)*time.Minute),             // 文件最大保存时间
+			rotatelogs.WithRotationTime(time.Duration(cfg.RotationTime)*time.Minute), // 日志切割时间间隔
+		)
+		//pathMap := lfshook.WriterMap{
+		//logrus.InfoLevel:  writer,
+		//logrus.PanicLevel: writer,
+		//}
+		/*hook =Hooks.Add(lfshook.NewHook(
+			pathMap,
+			&logrus.JSONFormatter{},
+		))*/
+		hook := lfshook.NewHook(writer, &log.TextFormatter{})
+		//lfshook.NewHook()
 
-	log.AddHook(hook)
+		log.AddHook(hook)
+	}
 }
 
 func main() {
@@ -58,7 +74,8 @@ func main() {
 	if err != nil {
 		log.Fatal("解析配置文出错", err)
 	}
-	log.Printf("%+v\n", cfg)
+	log.Printf("%+v", cfg)
+	log.Printf("%+v", cfg.Log)
 
 	initLog(subcmd, cfg.Log)
 

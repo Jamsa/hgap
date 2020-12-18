@@ -123,17 +123,17 @@ func (inbound *InBound) writeResp(reqID string, respWriter http.ResponseWriter, 
 func (inbound *InBound) index(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("请求处理出错", r)
+			log.Error("请求处理出错", r)
 		}
 	}()
 	content, err := httputil.DumpRequest(r, true)
 	if err != nil {
-		log.Println("保存请求信息出错", err)
+		log.Error("保存请求信息出错", err)
 		return
 	}
 	uid, err := uuid.NewV4()
 	if err != nil {
-		log.Println("生成请求uuid出错", err)
+		log.Error("生成请求uuid出错", err)
 		return
 	}
 	reqID := uid.String()
@@ -152,7 +152,7 @@ func (inbound *InBound) index(w http.ResponseWriter, r *http.Request) {
 		log.Println("获取响应:" + reqID)
 		inbound.writeResp(reqID, w, r)
 	case <-timeout.C:
-		log.Println("请求处理超时:" + reqID)
+		log.Warn("请求处理超时:" + reqID)
 		//返回时将自动cleanUp
 	}
 }

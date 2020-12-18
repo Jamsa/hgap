@@ -29,7 +29,7 @@ func (transfer *FileTransfer) Send(reqID string, data []byte) {
 
 	err := ioutil.WriteFile(filepath.Join(transfer.path, reqID)+transfer.fileExt, content, 0644)
 	if err != nil {
-		log.Println("写入请求文件出错", err)
+		log.Error("写入请求文件出错", err)
 		return
 	}
 }

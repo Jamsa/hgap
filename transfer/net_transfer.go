@@ -14,5 +14,5 @@ type NetTransfer struct {
 
 // Remove 删除数据
 func (transfer *NetTransfer) Remove(reqID string) {
-	log.Println("删除传输的数据(NOP)" + reqID)
+	log.Println("删中传输的数据(NOP)：", reqID)
 }

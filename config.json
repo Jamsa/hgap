@@ -14,7 +14,10 @@
     "inMonitorHost":  "0.0.0.0",
 	"inMonitorPort":  9091,
 	"outMonitorHost": "0.0.0.0",
-	"outMonitorPort": 9092,
+    "outMonitorPort": 9092,
+    "log":{
+        "level": "debug"
+    },
     "urlMapping": {
         "/test": "http://localhost:3005/index.html",
         "/": "https://cn.bing.com/"

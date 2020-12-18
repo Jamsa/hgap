@@ -62,7 +62,7 @@ func (outbound *OutBound) rewriteURL(uri string) (string, bool) {
 func (outbound *OutBound) processRequest(reqID string) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("处理请求文件", reqID, "出错", r)
+			log.Error("处理请求文件", reqID, "出错", r)
 		}
 	}()
 
@@ -70,13 +70,13 @@ func (outbound *OutBound) processRequest(reqID string) {
 	log.Println("读取请求:" + reqID)
 	content, err := outbound.monitor.Read(reqID)
 	if err != nil {
-		log.Println("读取响应数据", reqID, "出错", err)
+		log.Error("读取响应数据", reqID, "出错", err)
 		return
 	}
 	var buf = bufio.NewReader(strings.NewReader(string(content)))
 	req, err := http.ReadRequest(buf)
 	if err != nil && err != io.EOF {
-		log.Println("读取请求信息出错", err)
+		log.Error("读取请求信息出错", err)
 		return
 	}
 
@@ -85,13 +85,13 @@ func (outbound *OutBound) processRequest(reqID string) {
 		//
 		body, err := ioutil.ReadAll(req.Body)
 		if err != nil {
-			log.Println("读取请求Body出错", err)
+			log.Error("读取请求Body出错", err)
 			return
 		}
 		//转发请求
 		proxyReq, err := http.NewRequest(req.Method, url, bytes.NewReader(body))
 		if err != nil {
-			log.Println("构造请求对象出错", err)
+			log.Error("构造请求对象出错", err)
 			return
 		}
 		proxyReq.Header = make(http.Header)
@@ -103,19 +103,19 @@ func (outbound *OutBound) processRequest(reqID string) {
 		httpClient := &http.Client{}
 		resp, err := httpClient.Do(proxyReq)
 		if err != nil {
-			log.Println("执行请求时出错", err)
+			log.Error("执行请求时出错", err)
 			return
 		}
 
 		//保存响应
 		content, err := httputil.DumpResponse(resp, true)
 		if err != nil {
-			log.Println("Dump响应信息出错", err)
+			log.Error("Dump响应信息出错", err)
 			return
 		}
 		outbound.transfer.Send(reqID, content)
 		log.Println("写入响应数据完成:" + reqID)
 		return
 	}
-	log.Println("无匹配的转发路径", req.RequestURI)
+	log.Warn("无匹配的转发路径", req.RequestURI)
 }

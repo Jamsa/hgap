@@ -30,17 +30,17 @@ func splitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 		var frameType, length int32
 		err = binary.Read(bytes.NewReader(data[4:8]), binary.BigEndian, &length)
 		if err != nil {
-			log.Printf("读取FrameLength出错%v", length)
+			log.Errorf("读取FrameLength出错%v", length)
 			return 0, nil, err
 		}
 		err := binary.Read(bytes.NewReader(data[8:12]), binary.BigEndian, &frameType)
 		if err != nil {
-			log.Printf("读取FrameType出错%v", frameType)
+			log.Errorf("读取FrameType出错%v", frameType)
 			return 0, nil, err
 		}
 		end := 4*3 + length
 		if len(data) >= int(end) {
-			log.Printf("读取帧:%d,%d,%d,%d\n", frameType, length, end, len(data))
+			log.Debugf("读取帧:%d,%d,%d,%d", frameType, length, end, len(data))
 			//消费end长的数据，返回从第4位开始的完整Frame数据
 			return int(end), data[4:end], nil
 		}
@@ -62,7 +62,8 @@ func (monitor *TCPMonitor) readFrame(conn net.Conn) error {
 		if err != nil {
 			return err
 		}
-		log.Printf("收到数据帧:%v,%v", frame.FrameType, frame.Length)
+
+		log.Debugf("收到数据帧:%v,%v", frame.FrameType, frame.Length)
 		if frame.FrameType == packet.FrameTypeCLOSE {
 			log.Printf("接收到关闭通知")
 			return nil
@@ -76,10 +77,10 @@ func (monitor *TCPMonitor) readPacket(frame *packet.Frame) {
 	pack := &packet.Packet{}
 	err := pack.Decode(frame.Data)
 	if err != nil {
-		log.Printf("TCP数据帧解码错误: %s", err)
+		log.Errorf("TCP数据帧解码错误: %s", err)
 		return
 	}
-	log.Printf("将数据解码为分组: %+v,%+v,%+v,%+v\n", pack.ID, pack.Length, pack.Begin, pack.Size)
+	log.Debugf("将数据解码为分组: %+v,%+v,%+v,%+v\n", pack.ID, pack.Length, pack.Begin, pack.Size)
 	//log.Printf("解码数据帧，类型:%+v，长度:%+v\n", frame.FrameType, frame.Length)
 	monitor.packetReceive(pack)
 }
@@ -89,7 +90,7 @@ func (monitor *TCPMonitor) Start(onReady OnReady) {
 	monitor.onReady = onReady
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", monitor.host, monitor.port))
 	if err != nil {
-		fmt.Println("TCP监听失败", err)
+		log.Error("TCP监听失败", err)
 		return
 	}
 	log.Println("开始TCP包监视", listener.Addr().String())
@@ -99,7 +100,7 @@ func (monitor *TCPMonitor) Start(onReady OnReady) {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Println("接收连接出错:", err)
+			log.Error("接收连接出错:", err)
 		} else {
 			go monitor.readFrame(conn)
 		}
