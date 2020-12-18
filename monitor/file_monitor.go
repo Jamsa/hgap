@@ -28,6 +28,8 @@ type FileMonitor struct {
 	keepFile      bool             //保留接收到的文件
 }
 
+// TODO 增加cleanUp定时清理目录下的垃圾文件
+
 // Start 启动监视
 func (monitor *FileMonitor) Start(onReady OnReady) {
 	monitor.onReady = onReady

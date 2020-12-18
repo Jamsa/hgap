@@ -85,8 +85,8 @@ func (inbound *InBound) cleanUp(reqID string, finish finishChan, timeout *time.T
 	timeout.Stop()
 	//delete(reqs, reqID)
 	inbound.requests.Delete(reqID)
-	inbound.transfer.Remove(reqID)
-	inbound.monitor.Remove(reqID)
+	inbound.transfer.Remove(reqID) //清理发送的请求数据，文件类型的请求数据不能在发送后立即清理
+	inbound.monitor.Remove(reqID)  //清理接收的响应数据
 	close(finish)
 }
 
@@ -100,10 +100,13 @@ func (inbound *InBound) writeResp(reqID string, respWriter http.ResponseWriter, 
 	//读取响应
 	log.Println("读取响应:" + reqID)
 	content, err := inbound.monitor.Read(reqID)
+	//及时清理接收到的响应数据，无法处理超时的情况，统一在cleanUp中清理
+	//inbound.monitor.Remove(reqID)
 	if err != nil {
 		log.Println("读取响应数据", reqID, "出错", err)
 		return
 	}
+
 	var buf = bufio.NewReader(strings.NewReader(string(content)))
 	resp, err := http.ReadResponse(buf, request)
 	if err != nil {
