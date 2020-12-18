@@ -3,11 +3,22 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
+	"path"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
 )
+
+// LogConfig 日志配置
+type LogConfig struct {
+	Output       string `json:"output"`       //输出方式
+	Rotate       bool   `json:"rotate"`       //滚动输出
+	File         string `json:"file"`         //日志文件
+	MaxAge       int    `json:"maxAge"`       //保存时间
+	RotationTime int    `json:"rotationTime"` //滚动时间
+}
 
 // Config 配置信息
 type Config struct {
@@ -30,6 +41,8 @@ type Config struct {
 	InTransferType  string            `json:"inTransferType"`  //InBound传输类型
 	OutTransferType string            `json:"outTransferType"` //OutBound传输类型
 	URLMapping      map[string]string `json:"urlMapping"`      //URL路径映射
+
+	Log *LogConfig `json:"log"` //日志配置
 }
 
 // ParseConfig 解析配置文件
@@ -55,6 +68,13 @@ func ParseConfig() (*Config, error) {
 		OutTransferType: "file",
 		URLMapping:      map[string]string{
 			// "/": "http://www.baidu.com",
+		},
+		Log: &LogConfig{
+			Output:       "stdout,file",
+			Rotate:       true,
+			File:         path.Join("log", "hgap"),
+			MaxAge:       60 * 60 * 6, // 6小时
+			RotationTime: 60 * 60 * 1, // 1小时
 		},
 	}
 	var cfg string
