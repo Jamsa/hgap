@@ -4,36 +4,21 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"log"
 	"net"
-	"sort"
-	"sync"
-	"time"
 
 	"github.com/jamsa/hgap/packet"
 )
 
-// TODO 处理UDPContent、UDPMonitor中的重复代码，除Start、readPacket外的方法代码都相同
-
 // TCPContent 完整内容
 type TCPContent struct {
-	id         string
-	lock       sync.Mutex
-	length     int //已接收长度
-	createTime time.Time
-	packets    []*packet.Packet
+	NetContent
 }
 
 // TCPMonitor TCP包监视
 type TCPMonitor struct {
-	IMonitor
-	*Monitor
-	host     string    //监听主机
-	port     int       //监听端口
-	contents *sync.Map //数据
-	timeout  int       //等侍文件就绪的超时时间(ms)
+	NetMonitor
 }
 
 func splitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
@@ -65,6 +50,7 @@ func splitFunc(data []byte, atEOF bool) (advance int, token []byte, err error) {
 func (monitor *TCPMonitor) readFrame(conn net.Conn) error {
 	defer conn.Close()
 	scanner := bufio.NewScanner(conn)
+	//TODO 数字常量定义，buf的大小应与MTU相关
 	buf := make([]byte, 0, 64*1024)
 	scanner.Buffer(buf, 1024*1024)
 	scanner.Split(splitFunc)
@@ -119,7 +105,7 @@ func (monitor *TCPMonitor) Start(onReady OnReady) {
 	}
 }
 
-// Remove 删除数据
+/* // Remove 删除数据
 func (monitor *TCPMonitor) Remove(reqID string) {
 	log.Println("删除接收的数据" + reqID)
 	monitor.contents.Delete(reqID)
@@ -199,4 +185,4 @@ func (monitor *TCPMonitor) readAll(reqID string) ([]byte, error) {
 		return result.Bytes(), nil
 	}
 	return nil, errors.New("找不到请求数据" + reqID)
-}
+} */

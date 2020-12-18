@@ -11,10 +11,7 @@ import (
 
 // TCPTransfer 传输
 type TCPTransfer struct {
-	ITransfer
-	*Transfer
-	host string //服务器主机
-	port int    //服务器端口
+	NetTransfer
 }
 
 func sendFrame(conn net.Conn, frame *packet.Frame) error {
@@ -81,9 +78,4 @@ func (transfer *TCPTransfer) Send(reqID string, data []byte) {
 	/*buf := make([]byte, 0, 1024)
 	conn.Read(buf)*/
 	log.Printf("关闭传输连接:%s", reqID)
-}
-
-// Remove 删除数据
-func (transfer *TCPTransfer) Remove(reqID string) {
-	log.Println("删除传输的数据(NOP)" + reqID)
 }

@@ -47,44 +47,52 @@ func NewTransfer(inBound bool, cfg *config.Config) (ITransfer, error) {
 	}
 	if inBound && cfg.InTransferType == "udp" {
 		fileTransfer := UDPTransfer{
-			Transfer: &Transfer{
-				textTransfer: cfg.InTextTransfer,
+			NetTransfer{
+				Transfer: &Transfer{
+					textTransfer: cfg.InTextTransfer,
+				},
+				host: cfg.OutMonitorHost,
+				port: cfg.OutMonitorPort,
 			},
-			host: cfg.OutMonitorHost,
-			port: cfg.OutMonitorPort,
 		}
 		result = &fileTransfer
 		return result, nil
 	}
 	if !inBound && cfg.OutTransferType == "udp" {
 		fileTransfer := UDPTransfer{
-			Transfer: &Transfer{
-				textTransfer: cfg.OutTextTransfer,
+			NetTransfer{
+				Transfer: &Transfer{
+					textTransfer: cfg.OutTextTransfer,
+				},
+				host: cfg.InMonitorHost,
+				port: cfg.InMonitorPort,
 			},
-			host: cfg.InMonitorHost,
-			port: cfg.InMonitorPort,
 		}
 		result = &fileTransfer
 		return result, nil
 	}
 	if inBound && cfg.InTransferType == "tcp" {
 		fileTransfer := TCPTransfer{
-			Transfer: &Transfer{
-				textTransfer: cfg.InTextTransfer,
+			NetTransfer{
+				Transfer: &Transfer{
+					textTransfer: cfg.InTextTransfer,
+				},
+				host: cfg.OutMonitorHost,
+				port: cfg.OutMonitorPort,
 			},
-			host: cfg.OutMonitorHost,
-			port: cfg.OutMonitorPort,
 		}
 		result = &fileTransfer
 		return result, nil
 	}
 	if !inBound && cfg.OutTransferType == "tcp" {
 		fileTransfer := TCPTransfer{
-			Transfer: &Transfer{
-				textTransfer: cfg.OutTextTransfer,
+			NetTransfer{
+				Transfer: &Transfer{
+					textTransfer: cfg.OutTextTransfer,
+				},
+				host: cfg.InMonitorHost,
+				port: cfg.InMonitorPort,
 			},
-			host: cfg.InMonitorHost,
-			port: cfg.InMonitorPort,
 		}
 		result = &fileTransfer
 		return result, nil

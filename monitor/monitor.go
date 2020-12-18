@@ -24,16 +24,6 @@ type Monitor struct {
 	onReady      OnReady
 }
 
-// SetOnReady 设置回调
-/*func (monitor *Monitor) SetOnReady(onReady OnReady) {
-	monitor.onReady = onReady
-}*/
-
-// Start ss
-/*func (monitor *Monitor) Start() {
-	fmt.Println("###############")
-}*/
-
 // NewMonitor 创建数据监听器
 func NewMonitor(inBound bool, cfg *config.Config) (IMonitor, error) {
 	var result IMonitor
@@ -69,52 +59,60 @@ func NewMonitor(inBound bool, cfg *config.Config) (IMonitor, error) {
 	}
 	if inBound && cfg.OutTransferType == "udp" {
 		fileMonitor := UDPMonitor{
-			Monitor: &Monitor{
-				textTransfer: cfg.OutTextTransfer,
+			NetMonitor{
+				Monitor: &Monitor{
+					textTransfer: cfg.OutTextTransfer,
+				},
+				host:     cfg.InMonitorHost,
+				port:     cfg.InMonitorPort,
+				timeout:  cfg.Timeout,
+				contents: &sync.Map{},
 			},
-			host:     cfg.InMonitorHost,
-			port:     cfg.InMonitorPort,
-			timeout:  cfg.Timeout,
-			contents: &sync.Map{},
 		}
 		result = &fileMonitor
 		return result, nil
 	}
 	if !inBound && cfg.InTransferType == "udp" {
 		fileMonitor := UDPMonitor{
-			Monitor: &Monitor{
-				textTransfer: cfg.InTextTransfer,
+			NetMonitor{
+				Monitor: &Monitor{
+					textTransfer: cfg.InTextTransfer,
+				},
+				host:     cfg.OutMonitorHost,
+				port:     cfg.OutMonitorPort,
+				timeout:  cfg.Timeout,
+				contents: &sync.Map{},
 			},
-			host:     cfg.OutMonitorHost,
-			port:     cfg.OutMonitorPort,
-			timeout:  cfg.Timeout,
-			contents: &sync.Map{},
 		}
 		result = &fileMonitor
 		return result, nil
 	}
 	if inBound && cfg.OutTransferType == "tcp" {
 		fileMonitor := TCPMonitor{
-			Monitor: &Monitor{
-				textTransfer: cfg.OutTextTransfer,
+			NetMonitor{
+				Monitor: &Monitor{
+					textTransfer: cfg.OutTextTransfer,
+				},
+				host:     cfg.InMonitorHost,
+				port:     cfg.InMonitorPort,
+				timeout:  cfg.Timeout,
+				contents: &sync.Map{},
 			},
-			host:     cfg.InMonitorHost,
-			port:     cfg.InMonitorPort,
-			timeout:  cfg.Timeout,
-			contents: &sync.Map{},
 		}
 		result = &fileMonitor
 		return result, nil
 	}
 	if !inBound && cfg.InTransferType == "tcp" {
 		fileMonitor := TCPMonitor{
-			Monitor: &Monitor{
-				textTransfer: cfg.InTextTransfer,
+			NetMonitor{
+				Monitor: &Monitor{
+					textTransfer: cfg.InTextTransfer,
+				},
+				host:     cfg.OutMonitorHost,
+				port:     cfg.OutMonitorPort,
+				timeout:  cfg.Timeout,
+				contents: &sync.Map{},
 			},
-			host:     cfg.OutMonitorHost,
-			port:     cfg.OutMonitorPort,
-			timeout:  cfg.Timeout,
-			contents: &sync.Map{},
 		}
 		result = &fileMonitor
 		return result, nil
