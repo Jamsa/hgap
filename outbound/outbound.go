@@ -58,6 +58,13 @@ func (outbound *OutBound) rewriteURL(uri string) (string, bool) {
 	return "", false
 }
 
+// cleanUp 清理
+func (outbound *OutBound) cleanUp(reqID string) {
+	//只能立即清理monitor接收的数据
+	outbound.monitor.Remove(reqID)
+	//transfer中发送的数据（如文件）不能立即清理
+}
+
 // 处理请求
 func (outbound *OutBound) processRequest(reqID string) {
 	defer func() {
@@ -65,14 +72,18 @@ func (outbound *OutBound) processRequest(reqID string) {
 			log.Error("处理请求文件", reqID, "出错", r)
 		}
 	}()
+	defer outbound.cleanUp(reqID)
 
 	//读取请求
 	log.Println("读取请求:" + reqID)
 	content, err := outbound.monitor.Read(reqID)
+	//在cleanUp中统一清理,(此处可提前清理接收到的请求数据)
+	//outbound.monitor.Remove(reqID)
 	if err != nil {
-		log.Error("读取响应数据", reqID, "出错", err)
+		log.Error("读取请求数据", reqID, "出错", err)
 		return
 	}
+
 	var buf = bufio.NewReader(strings.NewReader(string(content)))
 	req, err := http.ReadRequest(buf)
 	if err != nil && err != io.EOF {
