@@ -42,7 +42,7 @@ func initLog(subcmd string, cfg *config.LogConfig) {
 	if strings.Contains(cfg.Output, "file") {
 		writer, _ := rotatelogs.New(
 			cfg.File+"-"+subcmd+".%Y%m%d%H%M.log",
-			rotatelogs.WithLinkName(cfg.File+".log"),                                 // 生成软链，指向最新日志文件
+			rotatelogs.WithLinkName(cfg.File+"-"+subcmd+".log"),                      // 生成软链，指向最新日志文件
 			rotatelogs.WithMaxAge(time.Duration(cfg.MaxAge)*time.Minute),             // 文件最大保存时间
 			rotatelogs.WithRotationTime(time.Duration(cfg.RotationTime)*time.Minute), // 日志切割时间间隔
 		)
