@@ -1,0 +1,31 @@
+@startuml hgap
+skinparam rectangle<<behavior>> {
+	roundCorner 25
+}
+sprite $bProcess jar:archimate/business-process
+sprite $aService jar:archimate/application-service
+sprite $aComponent jar:archimate/application-component
+sprite $aGap jar:archimate/gap
+sprite $aCloud jar:archimate/meaning
+
+rectangle "InBound"  as INB <<$aService>><<behavior>> #Application
+rectangle "In Bound Monitor" as IMO <<$aComponent>> #Application
+rectangle "In Bound Transfer" as ITR <<$aComponent>> #Application
+
+rectangle "OutBound"  as OUB <<$aService>><<behavior>> #Application
+rectangle "Out Bound Monitor" as OMO <<$aComponent>> #Application
+rectangle "Out Bound Transfer" as OTR <<$aComponent>> #Application
+
+queue "    File、TCP、UDP    " as GAP <<$aGap>> #Application
+
+INB -down-> ITR
+INB <-down- IMO
+ITR -.down-> GAP
+IMO <-.- GAP
+
+OMO -down-> OUB
+OTR <-down- OUB
+GAP -.down-> OMO
+GAP <-.down- OTR
+
+@enduml

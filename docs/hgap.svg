@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="626px" preserveAspectRatio="none" style="width:360px;height:626px;" version="1.1" viewBox="0 0 360 626" width="360px" zoomAndPan="magnify"><defs><filter height="300%" id="f10fjmtllr2a9g" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[3e83ac5bf0b5ad4e2f62fef7983123c2]
+entity INB--><rect fill="#C2F0FF" filter="url(#f10fjmtllr2a9g)" height="51.4883" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1.5;" width="77" x="138" y="7"/><image height="16" width="16" x="169" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAKklEQVR42mNgGAXI4B+JGFXz1v///5OCkQ0hWTO6IcPAAIoDkSrROJIBAN3sS2gPklrIAAAAAElFTkSuQmCC" y="17"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="57" x="148" y="45.5352">InBound</text><!--MD5=[405f5fe7fc0714e06465483a62860e65]
+entity IMO--><rect fill="#C2F0FF" filter="url(#f10fjmtllr2a9g)" height="51.4883" style="stroke:#000000;stroke-width:1.5;" width="139" x="19" y="118"/><image height="16" width="16" x="81" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVR42mNgoBH4RyTGbcDW////48PYDMBpE9EG4FJINxeMhgEVwmCQGUBpXqAfAADNiGsoBKNP4QAAAABJRU5ErkJggg==" y="128"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="119" x="29" y="156.5352">In Bound Monitor</text><!--MD5=[5930128927c42192d9415a469c6b8835]
+entity ITR--><rect fill="#C2F0FF" filter="url(#f10fjmtllr2a9g)" height="51.4883" style="stroke:#000000;stroke-width:1.5;" width="143" x="193" y="118"/><image height="16" width="16" x="257" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVR42mNgoBH4RyTGbcDW////48PYDMBpE9EG4FJINxeMhgEVwmCQGUBpXqAfAADNiGsoBKNP4QAAAABJRU5ErkJggg==" y="128"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="123" x="203" y="156.5352">In Bound Transfer</text><!--MD5=[0fa047dcb9dc3b924391feb29da2255e]
+entity OUB--><rect fill="#C2F0FF" filter="url(#f10fjmtllr2a9g)" height="51.4883" rx="12.5" ry="12.5" style="stroke:#000000;stroke-width:1.5;" width="89" x="132" y="563"/><image height="16" width="16" x="169" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAKklEQVR42mNgGAXI4B+JGFXz1v///5OCkQ0hWTO6IcPAAIoDkSrROJIBAN3sS2gPklrIAAAAAElFTkSuQmCC" y="573"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="69" x="142" y="601.5352">OutBound</text><!--MD5=[08c45e95b612b384d99ddf69f7dfeb54]
+entity OMO--><rect fill="#C2F0FF" filter="url(#f10fjmtllr2a9g)" height="51.4883" style="stroke:#000000;stroke-width:1.5;" width="151" x="7" y="452"/><image height="16" width="16" x="75" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVR42mNgoBH4RyTGbcDW////48PYDMBpE9EG4FJINxeMhgEVwmCQGUBpXqAfAADNiGsoBKNP4QAAAABJRU5ErkJggg==" y="462"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="131" x="17" y="490.5352">Out Bound Monitor</text><!--MD5=[32649c192d498d05c3e4cec11002e647]
+entity OTR--><rect fill="#C2F0FF" filter="url(#f10fjmtllr2a9g)" height="51.4883" style="stroke:#000000;stroke-width:1.5;" width="155" x="193" y="452"/><image height="16" width="16" x="263" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVR42mNgoBH4RyTGbcDW////48PYDMBpE9EG4FJINxeMhgEVwmCQGUBpXqAfAADNiGsoBKNP4QAAAABJRU5ErkJggg==" y="462"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="135" x="203" y="490.5352">Out Bound Transfer</text><!--MD5=[f165e5f594012cd5adefd11b907e9778]
+entity GAP--><path d="M101,290 L250,290 C255,290 255,310.7441 255,310.7441 C255,310.7441 255,331.4883 250,331.4883 L101,331.4883 C96,331.4883 96,310.7441 96,310.7441 C96,310.7441 96,290 101,290 " fill="#C2F0FF" filter="url(#f10fjmtllr2a9g)" style="stroke:#A80036;stroke-width:1.5;"/><path d="M250,290 C245,290 245,310.7441 245,310.7441 C245,331.4883 250,331.4883 250,331.4883 " fill="none" style="stroke:#A80036;stroke-width:1.5;"/><image height="16" width="16" x="163" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAOUlEQVR42mNgoCH4h4ZJ1kisOIYistX8I9GV1DPgH4WYZNtxuoJsA6jihYGNBaolJKokZapkJpIAAKhQP4FyJNt7AAAAAElFTkSuQmCC" y="295"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="107" x="117" y="323.5352">File、TCP、UDP</text><!--MD5=[d8c034d6282ce4b552083aafc2a4aaa9]
+link INB to ITR--><path d="M196.47,58.23 C209.75,74.68 227.23,96.34 241.15,113.58 " fill="none" id="INB-to-ITR" style="stroke:#A80036;stroke-width:1.0;"/><polygon fill="#A80036" points="244.61,117.86,242.0602,108.3469,241.4657,113.9724,235.8401,113.3779,244.61,117.86" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[d7724331e31dd735785b641becc58ce5]
+reverse link INB to IMO--><path d="M153.07,62.52 C139.14,79.78 121.65,101.44 108.39,117.86 " fill="none" id="INB-backto-IMO" style="stroke:#A80036;stroke-width:1.0;"/><polygon fill="#A80036" points="156.53,58.23,147.7601,62.7121,153.3857,62.1176,153.9802,67.7431,156.53,58.23" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[c6bd995839e4a724499fc1d011f1114b]
+link ITR to GAP--><path d="M251.18,169.2 C234.26,200.56 205.26,254.32 188.5,285.39 " fill="none" id="ITR-to-GAP" style="stroke:#A80036;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#A80036" points="186.12,289.81,193.9111,283.7852,188.4922,285.4086,186.8688,279.9896,186.12,289.81" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[d4d80f3c3750ec1a0c3eaee48be4e98d]
+reverse link IMO to GAP--><path d="M104.05,173.99 C121.69,207.44 149.97,261.07 165.12,289.81 " fill="none" id="IMO-backto-GAP" style="stroke:#A80036;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#A80036" points="101.52,169.2,102.1812,179.0266,103.8529,173.6224,109.2571,175.2941,101.52,169.2" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[0b01790d366329e2e046abf873fc7292]
+link OMO to OUB--><path d="M103.83,503.23 C118.13,519.82 137.01,541.71 151.94,559.02 " fill="none" id="OMO-to-OUB" style="stroke:#A80036;stroke-width:1.0;"/><polygon fill="#A80036" points="155.25,562.86,152.3919,553.435,151.9808,559.0768,146.3389,558.6657,155.25,562.86" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[1ef77d65c04c1dd20710baf156d469d8]
+reverse link OTR to OUB--><path d="M245.85,507.08 C230.9,524.41 212.03,546.3 197.75,562.86 " fill="none" id="OTR-backto-OUB" style="stroke:#A80036;stroke-width:1.0;"/><polygon fill="#A80036" points="249.17,503.23,240.268,507.4436,245.909,507.0202,246.3323,512.6612,249.17,503.23" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[aabcab00d26fe7668feff32881baebad]
+link GAP to OMO--><path d="M164.47,331.08 C148.21,359.91 117.72,414.01 98.86,447.48 " fill="none" id="GAP-to-OMO" style="stroke:#A80036;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#A80036" points="96.39,451.85,104.2951,445.9755,98.8461,447.4948,97.3267,442.0458,96.39,451.85" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[75c0460222a2a15a3d280d6054cc8dc3]
+reverse link GAP to OTR--><path d="M189.31,335.49 C207.2,366.57 238.24,420.46 256.31,451.85 " fill="none" id="GAP-backto-OTR" style="stroke:#A80036;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#A80036" points="186.77,331.08,187.7831,340.8766,189.2599,335.4159,194.7206,336.8927,186.77,331.08" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[67c67772afb065d75d1b97d5e648524c]
+@startuml hgap
+skinparam rectangle<<behavior>> {
+	roundCorner 25
+}
+sprite $bProcess jar:archimate/business-process
+sprite $aService jar:archimate/application-service
+sprite $aComponent jar:archimate/application-component
+sprite $aGap jar:archimate/gap
+sprite $aCloud jar:archimate/meaning
+
+rectangle "InBound"  as INB <<$aService>><<behavior>> #Application
+rectangle "In Bound Monitor" as IMO <<$aComponent>> #Application
+rectangle "In Bound Transfer" as ITR <<$aComponent>> #Application
+
+rectangle "OutBound"  as OUB <<$aService>><<behavior>> #Application
+rectangle "Out Bound Monitor" as OMO <<$aComponent>> #Application
+rectangle "Out Bound Transfer" as OTR <<$aComponent>> #Application
+
+queue "    File、TCP、UDP    " as GAP <<$aGap>> #Application
+
+INB -down-> ITR
+INB <-down- IMO
+ITR -.down-> GAP
+IMO <-.- GAP
+
+OMO -down-> OUB
+OTR <-down- OUB
+GAP -.down-> OMO
+GAP <-.down- OTR
+
+@enduml
+
+PlantUML version 1.2020.22(Sun Dec 06 17:36:27 CST 2020)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: zh
+Country: CN
+--></g></svg>
