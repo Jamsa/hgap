@@ -1,5 +1,5 @@
 {
-    "timeout": 30000,
+    "timeout": 20000,
     "port": 9090,
     "fileCheckInterval": 20,
     "fileScanInterval": 200,
@@ -19,7 +19,7 @@
         "level": "debug"
     },
     "urlMapping": {
-        "/test": "http://localhost:3005/index.html",
+        "/test": "http://127.0.0.1:3003/page/login/index.html",
         "/": "https://cn.bing.com/"
     }
 }

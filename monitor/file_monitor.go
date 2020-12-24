@@ -78,6 +78,11 @@ func (monitor *FileMonitor) Read(reqID string) ([]byte, error) {
 	return monitor.readFile(fileName)
 }
 
+// DebugTimeout 超时诊断
+func (monitor *FileMonitor) DebugTimeout(reqID string) {
+	log.Debug("FileMonitor DebugTimeout(NOP)")
+}
+
 // 文件创建
 func (monitor *FileMonitor) createHandler(fileName string) {
 	defer func() {

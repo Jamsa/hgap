@@ -12,6 +12,7 @@ type IMonitor interface {
 	Start(OnReady)
 	Read(string) ([]byte, error)
 	Remove(string)
+	DebugTimeout(string)
 	//SetOnReady(OnReady)
 }
 

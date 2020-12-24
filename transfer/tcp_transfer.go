@@ -74,8 +74,9 @@ func (transfer *TCPTransfer) Send(reqID string, data []byte) {
 	}
 	log.Debugf("发送关闭通知:%s", reqID)
 
-	//等侍结束位
-	/*buf := make([]byte, 0, 1024)
-	conn.Read(buf)*/
+	//等侍接收回应
+	//buf := make([]byte, 0, 1024)
+	//conn.Read(buf)
+	//time.Sleep(3)
 	log.Println("关闭传输连接", reqID)
 }

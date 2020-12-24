@@ -76,7 +76,7 @@ func (inbound *InBound) notify(reqID string) {
 		log.Println("发送响应文件通知:" + reqID)
 		ch.(finishChan) <- struct{}{}
 	} else {
-		log.Println("文件响应通道不存在:" + reqID)
+		log.Warn("文件响应通道不存在:" + reqID)
 	}
 }
 
@@ -94,7 +94,7 @@ func (inbound *InBound) cleanUp(reqID string, finish finishChan, timeout *time.T
 func (inbound *InBound) writeResp(reqID string, respWriter http.ResponseWriter, request *http.Request) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("输出响应出错", r)
+			log.Error("输出响应出错", r)
 		}
 	}()
 	//读取响应
@@ -140,15 +140,17 @@ func (inbound *InBound) index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	reqID := uid.String()
-	log.Println("发送请求:" + reqID)
-	inbound.transfer.Send(reqID, content)
-	log.Println("请求发送完成:" + reqID)
 
 	finish := make(finishChan)
+	log.Debug("保存响应Channel:" + reqID)
 	inbound.requests.Store(reqID, finish)
 	//超时
 	timeout := time.NewTicker(time.Duration(inbound.timeout) * time.Millisecond)
 	defer inbound.cleanUp(reqID, finish, timeout)
+
+	log.Println("发送请求:" + reqID)
+	inbound.transfer.Send(reqID, content)
+	log.Println("请求发送完成:" + reqID)
 
 	select {
 	case <-finish:
@@ -156,6 +158,7 @@ func (inbound *InBound) index(w http.ResponseWriter, r *http.Request) {
 		inbound.writeResp(reqID, w, r)
 	case <-timeout.C:
 		log.Warn("请求处理超时:" + reqID)
+		inbound.monitor.DebugTimeout(reqID)
 		//返回时将自动cleanUp
 	}
 }

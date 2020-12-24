@@ -42,6 +42,30 @@ func (monitor *NetMonitor) Read(reqID string) ([]byte, error) {
 	return monitor.readAll(reqID)
 }
 
+// DebugTimeout 超时诊断
+func (monitor *NetMonitor) DebugTimeout(reqID string) {
+	log.Debug("NetMonitor Start DebugTimeout========================")
+	content, ok := monitor.contents.Load(reqID)
+	if ok {
+		c := content.(*UDPContent)
+		sort.Slice(c.packets, func(i, j int) bool {
+			left := c.packets[i]
+			right := c.packets[j]
+			return left.Begin < right.Begin
+		})
+		log.Debug("接收到", len(c.packets), "个数据包")
+
+		for _, v := range c.packets {
+			log.Debugf("数据包信息:%s,%d/%d,%d", v.ID, v.Begin, v.Length, v.Size)
+		}
+
+	} else {
+		log.Debug("未接收到", reqID, "的任何数据")
+	}
+	log.Debug("NetMonitor End DebugTimeout========================")
+
+}
+
 // cleanUp 清理超时数据
 func (monitor *NetMonitor) cleanUp() {
 	for {
@@ -59,6 +83,7 @@ func (monitor *NetMonitor) cleanUp() {
 
 		// 执行清理
 		for _, v := range timeoutIDs {
+			monitor.DebugTimeout(v)
 			monitor.Remove(v)
 		}
 	}
@@ -68,10 +93,10 @@ func (monitor *NetMonitor) cleanUp() {
 func (monitor *NetMonitor) packetReceive(pack *packet.Packet) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("处理数据分包", pack, "出错", r)
+			log.Error("处理数据分包", pack, "出错", r)
 		}
 	}()
-
+	log.Debug("接收到", pack.ID, "的分包")
 	content, ok := monitor.contents.Load(pack.ID)
 	if !ok {
 		content = &UDPContent{
