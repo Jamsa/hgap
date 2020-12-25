@@ -67,7 +67,7 @@ func (monitor *FileMonitor) Start(onReady OnReady) {
 // Remove 删除数据
 func (monitor *FileMonitor) Remove(reqID string) {
 	if !monitor.keepFile {
-		log.Println("删除监控的文件" + reqID)
+		log.Println("删除监控的文件" + reqID)
 		os.Remove(filepath.Join(monitor.path, reqID) + monitor.fileExt)
 	}
 }
@@ -176,21 +176,21 @@ func checkFile(filename string, eof string) (result bool) {
 
 	stat, err := file.Stat() //os.Stat(filename)
 	if err != nil {
-		log.Error("checkFile无法获取文件信息", nil)
+		log.Error("checkFile无法获取文件信息", filename, nil)
 		return false
 	}
 	start := stat.Size() - int64(eoflen)
 	if start < 0 {
-		log.Error("checkFile文件大小不匹配", start)
+		log.Error("checkFile文件大小不匹配", filename, start)
 		return false
 	}
 	_, err = file.ReadAt(buf, start)
 	if err == nil && string(buf) == eof {
-		log.Error("checkFile文件结束内容匹配", string(buf))
+		log.Debug("checkFile文件结束内容匹配", filename, string(buf))
 		file.Seek(0, 0)
 		err = file.Truncate(start)
 		if err != nil {
-			log.Println("checkFile truncate file出错", err, start)
+			log.Error("checkFile truncate file出错", err, start)
 		}
 		file.Sync()
 

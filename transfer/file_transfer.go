@@ -37,7 +37,7 @@ func (transfer *FileTransfer) Send(reqID string, data []byte) {
 // Remove 删除文件
 func (transfer *FileTransfer) Remove(reqID string) {
 	if !transfer.keepFile {
-		log.Println("删除传输的文件" + reqID)
+		log.Println("删除传输的文件" + reqID)
 		os.Remove(filepath.Join(transfer.path, reqID) + transfer.fileExt)
 	}
 }
