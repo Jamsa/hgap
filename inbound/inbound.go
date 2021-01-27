@@ -134,11 +134,11 @@ func (inbound *InBound) index(w http.ResponseWriter, r *http.Request) {
 		log.Error("保存请求信息出错", err)
 		return
 	}
-	uid, err := uuid.NewV4()
-	if err != nil {
+	uid /*, err*/ := uuid.NewV4()
+	/*if err != nil {
 		log.Error("生成请求uuid出错", err)
 		return
-	}
+	}*/
 	reqID := uid.String()
 
 	finish := make(finishChan)
