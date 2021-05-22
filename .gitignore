@@ -8,3 +8,5 @@ http.resp
 *.exe
 dist
 log
+hgap
+hgap.exe
